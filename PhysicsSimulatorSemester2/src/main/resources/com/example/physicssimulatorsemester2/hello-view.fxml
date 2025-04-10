@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+<!--<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"-->
+<!--      fx:controller="com.example.physicssimulatorsemester2.HelloController">-->
+<!--    <padding>-->
+<!--        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>-->
+<!--    </padding>-->
+
+<!--    <Label fx:id="welcomeText"/>-->
+<!--    <Button text="Hello!" onAction="#onHelloButtonClick"/>-->
+<!--</VBox>-->
+
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1019.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.HelloController">
+<children>
+    <Button layoutX="14.0" layoutY="411.0" onAction="#handleStart" text="Start" textFill="#030303">
+        <graphic>
+            <Label fx:id="welcomeText" />
+        </graphic>
+    </Button>
+
+    <Canvas fx:id="canvas" height="388.0" layoutX="10.0" layoutY="14.0" width="833.0" />
+    <Slider fx:id="angleSlider" layoutX="231.0" layoutY="417.0" />
+    <Text layoutX="178.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="45.0" />
+    <Button layoutX="65.0" layoutY="411.0" onAction="#handleStop" text="Stop">
+        <graphic>
+            <Label fx:id="welcomeText1" />
+        </graphic>
+    </Button>
+    <Button layoutX="118.0" layoutY="411.0" onAction="#handleReset" text="Reset">
+        <graphic>
+            <Label fx:id="welcomeText11" />
+        </graphic>
+    </Button>
+    <Button fx:id="resumeBtn" layoutX="57.0" layoutY="443.0" onAction="#handleResume" text="Resume">
+        <graphic>
+            <Label fx:id="welcomeText12" />
+        </graphic>
+    </Button>
+    <Slider fx:id="velocitySlider" layoutX="431.0" layoutY="417.0" />
+    <Text layoutX="381.0" layoutY="429.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="45.0" />
+    <Text fx:id="angleLbl" layoutX="847.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="98.0">
+        <font>
+            <Font size="22.0"/>
+        </font>
+    </Text>
+    <Text fx:id="velocityLbl" layoutX="847.0" layoutY="75.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="98.0">
+        <font>
+            <Font size="22.0" />
+        </font>
+    </Text>
+</children>
+</AnchorPane>
