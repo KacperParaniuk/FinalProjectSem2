@@ -6,15 +6,15 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import java.util.ArrayList;
+
+import static java.lang.Math.*;
 
 public class HelloController {
     public Button resumeBtn;
@@ -32,6 +32,7 @@ public class HelloController {
     private double x,y = 0;
     private double vx, vy;
     private double dt = 0.05;
+    private double dtTrajectory = 0.3;
     private double g = 9.8;
     private double v0 = 100;
 
@@ -41,12 +42,19 @@ public class HelloController {
     public boolean stopped = false;
 
 
+    private boolean kinematicsSimulation = true;
+
+
 
     private javafx.animation.AnimationTimer timer;
 
-    double scale = .2;
+    double scale = .5;
 
     public void initialize(){
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        createKinematicsSimulationSpace(gc);
+
+
         resumeBtn.setVisible(false);
 
         gravityLbl.setText("Gravitational Acceleration: 9.81 m/s2");
@@ -69,6 +77,22 @@ public class HelloController {
     }
 
 
+    public void createKinematicsSimulationSpace(GraphicsContext gc){
+        // creating the background
+
+        gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // clearing canvas
+
+        // creating the background
+
+        gc.setFill(Color.SADDLEBROWN);
+        gc.fillRect(0, canvas.getHeight()-10, canvas.getWidth(),10); // creates a ground
+        gc.setFill(Color.SKYBLUE);
+        gc.fillRect(0,0, canvas.getWidth(),380);
+
+
+    }
+
+
     @FXML
     private void handleStart() {
 //        System.out.println("Start clicked! Angle = " + angleSlider.getValue());
@@ -76,7 +100,7 @@ public class HelloController {
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 //        gc.fillText("Launching at angle: " + angleSlider.getValue(), 50, 50);
 
-        x = 0;
+        x = 10;
         y= canvas.getHeight()-10; // initial (0,0) position
         v0 = velocitySlider.getValue();
 
@@ -89,21 +113,9 @@ public class HelloController {
 
 
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
-
-
         // canvas is from javafx that can be used as our drawing board where we will simulate!
 
-        gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // clearing canvas
-
-
-        // creating the background
-
-        gc.setFill(Color.SADDLEBROWN);
-        gc.fillRect(0, canvas.getHeight()-10, canvas.getWidth(),10); // creates a ground
-        gc.setFill(Color.SKYBLUE);
-        gc.fillRect(0,0, canvas.getWidth(),380);
-
-
+        createKinematicsSimulationSpace(gc);
 
         timer = new AnimationTimer(){ // gives us access to the timer variable anywhere in our class.
             @Override
@@ -175,9 +187,6 @@ public class HelloController {
         vy += g * dt;
         // no vx component because no drag and vx stays constant
 
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(vy);
     }
 
     public void toggleEarth(ActionEvent actionEvent) {
@@ -209,36 +218,109 @@ public class HelloController {
 
 
 
-    public void handleChangeAngle(MouseEvent mouseEvent) {
-        double angle = Math.toRadians(angleSlider.getValue());
-        System.out.println(angle);
+//    public void handleChangeAngle(MouseEvent mouseEvent) {
+//        double angle = Math.toRadians(angleSlider.getValue());
+//        System.out.println(angle);
+//
+//        vx = v0 * cos(angle);
+//        vy = -v0 * sin(angle);
+//
+//
+//    }
 
-        vx = v0 * cos(angle);
-        vy = -v0 * sin(angle);
-
-
-    }
-
-    public void handleChangeVelocity(MouseEvent mouseEvent) {
+    public void handleChangeVelocity(MouseEvent dragEvent) {
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
+        createKinematicsSimulationSpace(gc); // reset velocity vector by clearing canvas
 
         double angle = Math.toRadians(angleSlider.getValue());
+        v0 = velocitySlider.getValue(); // get a new velocity each time user drags slider
 
-        vx = v0 * cos(angle);
-        vy = -v0 * sin(angle);
+        x= 10;
+        y = canvas.getHeight()-10;
+        double vx = v0 * cos(angle);
+        double vy = -v0 * sin(angle);
 
-        double initialX = 0;
+        buildTrajectoryPath(gc,x,y,vx,vy);
+
+        System.out.println(vx + " Velocity X");
+        System.out.println(vy + " Velocity Y");
+
+        double initialX = 10;
         double initialY = canvas.getHeight()-10;
         double endX = x + vx * scale; // sets the magnitude
         double endY = y + vy * scale;
 
         gc.setStroke(Color.BLUE);
-        gc.setLineWidth(2);
+        gc.setLineWidth(5);
         gc.strokeLine(initialX, initialY, endX, endY);
+
+        drawArrowHead(gc, endX,endY,angle);
+
+    }
+
+    public void drawArrowHead(GraphicsContext gc, double x, double y, double angle){
+        double size = 10; // size of arrow lines
+
+        double angle1 = angle + Math.toRadians(150); // offset for lines making up the arrow
+        double angle2 = angle - Math.toRadians(150);
+
+        System.out.println(Math.toDegrees(angle1) + "Angle 1");
+        System.out.println(Math.toDegrees(angle2) + "Angle 2");
+
+        double x1 = x + size * Math.cos(angle1);
+        double y1 = y + Math.abs(size * Math.sin(angle1));
+        double x2 = x + size * Math.cos(angle2);
+        double y2 = y + Math.abs(size * Math.sin(angle2));
+
+        gc.strokeLine(x,y, x1,y1);
+        gc.strokeLine(x,y,x2,y2);
+
+
+
+    }
+
+    public void buildTrajectoryPath(GraphicsContext gc, double x, double y, double vx, double vy){
+//        x = 10;
+//        y= canvas.getHeight()-10; // initial (0,0) position
+//        v0 = velocitySlider.getValue();
+
+        double xT = 10;
+        double yT = canvas.getHeight()-10;
+        ArrayList<Point> trajectoryPoints = new ArrayList<>();
+
+
+        while(!(yT >= canvas.getHeight()-9)){ // if the y value gets hits the bottom of the page
+
+            // Euler time-stepping
+
+            xT += vx * dtTrajectory;
+            yT += vy * dtTrajectory;
+            vy += g * dtTrajectory;
+
+            trajectoryPoints.add(new Point(xT, yT));
+
+        }
+
+
+        for (int i = 0; i < trajectoryPoints.size(); i++) {
+            gc.setFill(Color.WHITE);
+            gc.fillOval(trajectoryPoints.get(i).getX(),trajectoryPoints.get(i).getY(),5,5);
+        }
+
+
+
+
+
 
 
 
 
 
     }
+
+
+
+
+
+
 }
