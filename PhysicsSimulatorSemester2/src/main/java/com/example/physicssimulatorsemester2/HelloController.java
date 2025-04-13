@@ -21,6 +21,8 @@ public class HelloController {
     public Text angleLbl, velocityLbl;
     public ToggleButton earthToggleButton, marsToggleButton, jupiterToggleButton;
     public Text gravityLbl;
+    public ToggleButton showVectorArrowsBtn, showBtn, handleDragBtn;
+    public Text currentVelocityLabel;
     @FXML
     private Canvas canvas;
 
@@ -32,9 +34,11 @@ public class HelloController {
     private double x,y = 0;
     private double vx, vy;
     private double dt = 0.05;
-    private double dtTrajectory = 0.3;
+    private double dtTrajectory = 0.10;
     private double g = 9.8;
     private double v0 = 100;
+
+    private double metersToPixels = 10;
 
     // vx = v0 * cos(angle)
     // vy = v0 * sin(angle)
@@ -51,9 +55,7 @@ public class HelloController {
     double scale = .5;
 
     public void initialize(){
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        createKinematicsSimulationSpace(gc);
-
+        createKinematicsSimulationSpace();
 
         resumeBtn.setVisible(false);
 
@@ -77,8 +79,10 @@ public class HelloController {
     }
 
 
-    public void createKinematicsSimulationSpace(GraphicsContext gc){
+    public void createKinematicsSimulationSpace(){
         // creating the background
+
+        GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
 
         gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // clearing canvas
 
@@ -101,7 +105,7 @@ public class HelloController {
 //        gc.fillText("Launching at angle: " + angleSlider.getValue(), 50, 50);
 
         x = 10;
-        y= canvas.getHeight()-10; // initial (0,0) position
+        y = canvas.getHeight()-10; // initial (0,0) position
         v0 = velocitySlider.getValue();
 
         double angle = Math.toRadians(angleSlider.getValue());
@@ -115,7 +119,7 @@ public class HelloController {
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
         // canvas is from javafx that can be used as our drawing board where we will simulate!
 
-        createKinematicsSimulationSpace(gc);
+        createKinematicsSimulationSpace();
 
         timer = new AnimationTimer(){ // gives us access to the timer variable anywhere in our class.
             @Override
@@ -163,8 +167,6 @@ public class HelloController {
 
         resumeBtn.setVisible(false);
 
-
-
     }
 
 
@@ -182,9 +184,12 @@ public class HelloController {
         // Euler time-stepping
 
 
-        x += vx * dt;
-        y += vy * dt;
+        x += (vx * dt) * metersToPixels;
+        y += (vy * dt) * metersToPixels;
         vy += g * dt;
+
+        System.out.println(x + " X Component");
+        System.out.println(y + " Y Component");
         // no vx component because no drag and vx stays constant
 
     }
@@ -228,9 +233,9 @@ public class HelloController {
 //
 //    }
 
-    public void handleChangeVelocity(MouseEvent dragEvent) {
+    public void handleChangeVelocity() {
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
-        createKinematicsSimulationSpace(gc); // reset velocity vector by clearing canvas
+        createKinematicsSimulationSpace(); // reset velocity vector by clearing canvas
 
         double angle = Math.toRadians(angleSlider.getValue());
         v0 = velocitySlider.getValue(); // get a new velocity each time user drags slider
@@ -240,10 +245,13 @@ public class HelloController {
         double vx = v0 * cos(angle);
         double vy = -v0 * sin(angle);
 
-        buildTrajectoryPath(gc,x,y,vx,vy);
+        // user sees path of trajectory
+        buildTrajectoryPath(gc, vx,vy);
 
-        System.out.println(vx + " Velocity X");
-        System.out.println(vy + " Velocity Y");
+        // user sees the max height and distance
+        if(showHeightAndDistance){
+            buildHeightAndDistance(v0, angle, gc);
+        }
 
         double initialX = 10;
         double initialY = canvas.getHeight()-10;
@@ -279,48 +287,63 @@ public class HelloController {
 
     }
 
-    public void buildTrajectoryPath(GraphicsContext gc, double x, double y, double vx, double vy){
-//        x = 10;
-//        y= canvas.getHeight()-10; // initial (0,0) position
-//        v0 = velocitySlider.getValue();
-
+    public void buildTrajectoryPath(GraphicsContext gc , double vx, double vy){
         double xT = 10;
         double yT = canvas.getHeight()-10;
         ArrayList<Point> trajectoryPoints = new ArrayList<>();
 
-
-        while(!(yT >= canvas.getHeight()-9)){ // if the y value gets hits the bottom of the page
-
-            // Euler time-stepping
-
-            xT += vx * dtTrajectory;
-            yT += vy * dtTrajectory;
+        while(!(yT >= canvas.getHeight()-9)){
+            xT += vx * dtTrajectory * metersToPixels;
+            yT += vy * dtTrajectory * metersToPixels;
             vy += g * dtTrajectory;
-
             trajectoryPoints.add(new Point(xT, yT));
-
         }
-
 
         for (int i = 0; i < trajectoryPoints.size(); i++) {
             gc.setFill(Color.WHITE);
             gc.fillOval(trajectoryPoints.get(i).getX(),trajectoryPoints.get(i).getY(),5,5);
         }
 
+    }
 
+    public void buildHeightAndDistance(double v, double initialAngle, GraphicsContext gc){
 
+        double y = (Math.pow(v,2)  * Math.pow((Math.sin(initialAngle)),2)) / (2 * g); // angle in radians
+        double actualMaxHeight = canvas.getHeight() - (y * metersToPixels);
+        double x = (Math.pow(v, 2) * Math.sin(2*initialAngle)/g);
+        double actualRange = 10 + x * metersToPixels;
+        gc.setFill(Color.BLACK);
+        gc.fillText("Max Height: "+ roundToOneDecimalPlace(y) + " meters", 10, actualMaxHeight-10);
+        gc.fillText("Range " + roundToOneDecimalPlace(x) +" meters", actualRange, canvas.getHeight()-20);
 
+    }
 
+    public double roundToOneDecimalPlace(double val){
+        return (Math.round(val * 10)) / 10.0;
+    }
 
+    private boolean showHeightAndDistance = false;
+    public void handleShowHeightDistance(ActionEvent actionEvent) {
+        if(showHeightAndDistance){
+            showHeightAndDistance = false;
+            handleChangeVelocity();
 
-
+        }
+        else{
+            showHeightAndDistance = true;
+            handleChangeVelocity();
+        }
 
 
     }
 
+    private boolean isDrag = false;
+    public void handleAddDrag(ActionEvent actionEvent) {
+        isDrag = true;
+    }
 
-
-
-
-
+    private boolean isVectorArrows = false;
+    public void handleShowVectorArrows(ActionEvent actionEvent) {
+        isVectorArrows = true;
+    }
 }
