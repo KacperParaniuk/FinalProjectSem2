@@ -56,5 +56,13 @@
             <Font size="22.0" />
          </font>
       </Text>
+      <ToggleButton fx:id="showBtn" layoutX="784.0" layoutY="411.0" mnemonicParsing="false" onAction="#handleShowHeightDistance" text="Show Max Height &amp; Distance" />
+      <ToggleButton fx:id="handleDragBtn" layoutX="784.0" layoutY="473.0" mnemonicParsing="false" onAction="#handleAddDrag" text="Add Drag" />
+      <Text fx:id="currentVelocityLabel" layoutX="843.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Velocity: " wrappingWidth="149.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <ToggleButton fx:id="showVectorArrowsBtn" layoutX="784.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleShowVectorArrows" text="Show Vector Arrows" />
 </children>
 </AnchorPane>
