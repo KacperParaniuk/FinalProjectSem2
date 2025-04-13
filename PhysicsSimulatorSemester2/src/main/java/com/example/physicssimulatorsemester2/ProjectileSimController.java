@@ -12,11 +12,12 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
-public class HelloController {
+public class ProjectileSimController {
     public Button resumeBtn;
     public Text angleLbl, velocityLbl;
     public ToggleButton earthToggleButton, marsToggleButton, jupiterToggleButton;
@@ -346,4 +347,15 @@ public class HelloController {
     public void handleShowVectorArrows(ActionEvent actionEvent) {
         isVectorArrows = true;
     }
+
+
+    public void actionMainMenu(){
+        try {
+            HelloApplication.loadScene("MainMenu.fxml", "Physics Simulator");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 }

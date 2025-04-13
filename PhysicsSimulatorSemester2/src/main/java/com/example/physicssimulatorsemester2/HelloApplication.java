@@ -8,18 +8,23 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class HelloApplication extends Application {
+    private static Stage primaryStage;
+
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 1000, 1000);
-        stage.setTitle("Hello!");
-        stage.setScene(scene);
-        stage.show();
+        primaryStage = stage;
+        loadScene("MainMenu.fxml", "Physics Simulator");
+    }
+
+    public static void loadScene(String fxmlFile, String title) throws IOException {
+        FXMLLoader loader = new FXMLLoader(HelloApplication.class.getResource(fxmlFile));
+        Scene scene = new Scene(loader.load(), 1000, 1000);
+        primaryStage.setTitle(title);
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     public static void main(String[] args) {
         launch();
     }
-
-
 }
