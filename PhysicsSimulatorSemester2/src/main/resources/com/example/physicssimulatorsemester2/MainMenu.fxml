@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
@@ -16,8 +17,17 @@
             <Font size="38.0" />
          </font>
       </Text>
-      <ImageView fx:id="imgViewPendulum" fitHeight="150.0" fitWidth="200.0" layoutX="288.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="imgViewProjectileMotion" fitHeight="150.0" fitWidth="200.0" layoutX="61.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true" />
-      <ImageView fx:id="imgViewSpring" fitHeight="150.0" fitWidth="200.0" layoutX="509.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="imgViewPendulum" fitHeight="150.0" fitWidth="200.0" layoutX="313.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../Pictures/pendulum.png" />
+         </image></ImageView>
+      <ImageView fx:id="imgViewProjectileMotion" fitHeight="150.0" fitWidth="200.0" layoutX="61.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../Pictures/projectileMotion.PNG" />
+         </image></ImageView>
+      <ImageView fx:id="imgViewSpring" fitHeight="150.0" fitWidth="200.0" layoutX="509.0" layoutY="104.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../../../Pictures/spring.PNG" />
+         </image></ImageView>
    </children>
 </AnchorPane>

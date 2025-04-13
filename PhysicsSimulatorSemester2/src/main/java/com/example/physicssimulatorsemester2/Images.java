@@ -12,8 +12,9 @@ public class Images {
 
 
     public Image getProjectileMotionPicture(){
+
         try {
-            return new Image(new FileInputStream("src/main/java/resources/Pictures/projectileMotion.png"));
+            return new Image(new FileInputStream("src/main/resources/Pictures/projectileMotion.PNG"));
         }
         catch (FileNotFoundException e) {
 
@@ -26,7 +27,7 @@ public class Images {
 
     public Image getPendulumPicture(){
         try {
-            return new Image(new FileInputStream("src/main/java/resources/Pictures/pendulum.png"));
+            return new Image(new FileInputStream("src/main/resources/Pictures/pendulum.png"));
         }
         catch (FileNotFoundException e) {
 
@@ -40,10 +41,10 @@ public class Images {
 
     public Image getSpringPicture(){
         try {
-            return new Image(new FileInputStream("src/main/java/resources/Pictures/spring.png"));
+            Image p = new Image(new FileInputStream("src/main/resources/Pictures/spring.PNG"));
+            return p;
         }
         catch (FileNotFoundException e) {
-
             e.printStackTrace();
 
         }

@@ -5,18 +5,17 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class MainMenuController {
-    public ImageView imgViewPendulum, imgViewProjectileMotion, imgViewSpring;
 
 
-    public Images getImages = new Images();
+    public void initialize() {
 
-    public void initialize(){
-        imgViewPendulum.setImage((getImages.getPendulumPicture()));
-        imgViewProjectileMotion.setImage((getImages.getProjectileMotionPicture()));
-        imgViewSpring.setImage((getImages.getSpringPicture()));
+
+
 
 
     }
