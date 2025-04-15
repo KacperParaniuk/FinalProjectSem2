@@ -47,7 +47,7 @@ public class ProjectileSimController {
     public boolean stopped = false;
 
 
-    private boolean kinematicsSimulation = true;
+    private boolean isEducationalMode = false;
 
 
 
@@ -108,6 +108,8 @@ public class ProjectileSimController {
         x = 10;
         y = canvas.getHeight()-10; // initial (0,0) position
         v0 = velocitySlider.getValue();
+
+        System.out.println(isEducationalMode);
 
         double angle = Math.toRadians(angleSlider.getValue());
 //        System.out.println(angle);
@@ -338,6 +340,8 @@ public class ProjectileSimController {
 
     }
 
+
+
     private boolean isDrag = false;
     public void handleAddDrag(ActionEvent actionEvent) {
         isDrag = true;
@@ -348,10 +352,14 @@ public class ProjectileSimController {
         isVectorArrows = true;
     }
 
+    public void setEducationalMode(boolean val){
+        isEducationalMode = val;
+    }
 
     public void actionMainMenu(){
         try {
-            HelloApplication.loadScene("MainMenu.fxml", "Physics Simulator");
+
+            HelloApplication.loadScene("MainMenu.fxml", "Physics Simulator", false);
         } catch (IOException e) {
             e.printStackTrace();
         }
