@@ -6,8 +6,11 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -18,12 +21,17 @@ import java.util.ArrayList;
 import static java.lang.Math.*;
 
 public class ProjectileSimController {
-    public Button resumeBtn;
+    public Button resumeBtn, startBtn, stopBtn, resetBtn;
     public Text angleLbl, velocityLbl;
     public ToggleButton earthToggleButton, marsToggleButton, jupiterToggleButton;
     public Text gravityLbl;
     public ToggleButton showVectorArrowsBtn, showBtn, handleDragBtn;
     public Text currentVelocityLabel;
+    public ToggleButton nextStepBtn;
+    public Text angleSliderLabel, velocitySliderLabel, chooseGravityLabel;
+    public Button nextStepButton;
+    public Label tooltipLabel;
+    public ImageView tooltipImage;
     @FXML
     private Canvas canvas;
 
@@ -179,13 +187,16 @@ public class ProjectileSimController {
             timer.stop();
             return;
         }
-
+        
+//        if(isVectorArrows){
+//            showVectors(x,y,gc);
+//        }
+        
         // draw
         gc.setFill(Color.RED);
         gc.fillOval(x,y,5,5);
 
         // Euler time-stepping
-
 
         x += (vx * dt) * metersToPixels;
         y += (vy * dt) * metersToPixels;
@@ -239,10 +250,20 @@ public class ProjectileSimController {
     public void handleChangeVelocity() {
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
         createKinematicsSimulationSpace(); // reset velocity vector by clearing canvas
-
-        double angle = Math.toRadians(angleSlider.getValue());
-        v0 = velocitySlider.getValue(); // get a new velocity each time user drags slider
-
+        double angle;
+                
+        if(isEducationalMode){
+            angle = Math.toRadians(60);
+            v0 = 25;
+            angleLbl.setText("Angle: " + 60+"°");
+            velocityLbl.setText("Velocity: " + 25 +" m/s");
+            
+        }
+        else{
+            angle = Math.toRadians(angleSlider.getValue());
+            v0 = velocitySlider.getValue(); // get a new velocity each time user drags slider
+        }
+        
         x= 10;
         y = canvas.getHeight()-10;
         double vx = v0 * cos(angle);
@@ -309,8 +330,91 @@ public class ProjectileSimController {
 
     }
 
-    public void buildHeightAndDistance(double v, double initialAngle, GraphicsContext gc){
+//    public void showVectors(double x, double y, GraphicsContext gc){
+//        double size = 10;
+//        double endX = x; 
+//        double endY = y+size;
+//        
+//        gc.setStroke(Color.RED);
+//        gc.setLineWidth(5);
+//        gc.strokeLine(x, y, endX, endY);
+//
+//        drawArrowHead(gc, endX,endY,-90);
+//        
+//    }
 
+    private int stepIndex = 0;
+
+    @FXML
+    private void handleNextStep(){
+        if(stepIndex<10){
+            stepIndex++;
+            updateLectureStep();
+
+
+
+        }
+    }
+
+    private void handlePreviousStep(){
+
+    }
+
+    private void updateLectureStep(){
+
+        double v0 = velocitySlider.getValue();
+        double angle = Math.toRadians(angleSlider.getValue());
+        double vx = v0 * Math.cos(angle);
+        double vy = v0 * Math.sin(angle);
+
+        switch (stepIndex) {
+            case 1:
+                tooltipLabel.setText("These are the basic kinematics equations \n" +
+                        "used for calculating various variables during an objects flight \n" +
+                        "and creating creating projectile motion !   \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
+                tooltipImage.setLayoutY(250);
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/kinematicsEQS.PNG")));
+                break;
+            case 2:
+                tooltipLabel.setText("When you throw an object in real life there will be some angle and some velocity \n" +
+                        "and that component of velocity splits into Vx and Vy for velocity's in both the x and y directions\n " +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/rightTriangle.PNG")));
+                break;
+            case 3:
+            case 4:
+                tooltipLabel.setText("The variables we will be using \n" +
+                        "V = 25m/s\n" +
+                        "Theta = 60°\n" +
+                        "g = 9.81 (Acceleration due to gravity)" );
+                tooltipImage.setImage(null);
+                tooltipLabel.setLayoutX(50);
+                tooltipLabel.setLayoutY(400);
+                nextStepButton.setLayoutX(50);
+                nextStepButton.setLayoutY(540);
+                handleChangeVelocity();
+
+        }
+
+    }
+
+    public void buildHeightAndDistance(double v, double initialAngle, GraphicsContext gc){
         double y = (Math.pow(v,2)  * Math.pow((Math.sin(initialAngle)),2)) / (2 * g); // angle in radians
         double actualMaxHeight = canvas.getHeight() - (y * metersToPixels);
         double x = (Math.pow(v, 2) * Math.sin(2*initialAngle)/g);
@@ -354,6 +458,44 @@ public class ProjectileSimController {
 
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
+        if(isEducationalMode){
+            resumeBtn.setVisible(false);
+            earthToggleButton.setVisible(false);
+            marsToggleButton.setVisible(false);
+            jupiterToggleButton.setVisible(false);
+            showVectorArrowsBtn.setVisible(false);
+            showBtn.setVisible(false);
+            handleDragBtn.setVisible(false);
+            angleSlider.setVisible(false);
+            velocitySlider.setVisible(false);
+            angleSliderLabel.setVisible(false);
+            velocitySliderLabel.setVisible(false);
+            stopBtn.setVisible(false);
+            startBtn.setVisible(false);
+            resetBtn.setVisible(false);
+            chooseGravityLabel.setVisible(false);
+
+            tooltipLabel.setVisible(true);
+            tooltipLabel.setText("Step 1: Welcome top the Projectile Motion Simulation! \n"
+            + "You will click next step each time you complete the task / read what I say! \n"
+            + "Today we are learning the basics of projectile motion!" + " Click \"next step\" once your done! \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+            );
+            tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/projectileMotion.PNG")));
+        }
+        else{
+            tooltipLabel.setVisible(false);
+            nextStepButton.setVisible(false);
+            tooltipImage.setVisible(false);
+
+        }
     }
 
     public void actionMainMenu(){

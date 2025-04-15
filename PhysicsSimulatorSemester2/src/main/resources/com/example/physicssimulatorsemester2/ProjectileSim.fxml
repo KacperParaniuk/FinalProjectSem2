@@ -5,13 +5,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1019.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.ProjectileSimController">
     <children>
-        <Button layoutX="14.0" layoutY="411.0" onAction="#handleStart" text="Start" textFill="#030303">
+        <Button fx:id="startBtn" layoutX="14.0" layoutY="411.0" onAction="#handleStart" text="Start" textFill="#030303">
             <graphic>
                 <Label fx:id="welcomeText" />
             </graphic>
@@ -19,13 +20,13 @@
 
         <Canvas fx:id="canvas" height="388.0" layoutX="10.0" layoutY="14.0" width="833.0" />
         <Slider fx:id="angleSlider" layoutX="231.0" layoutY="417.0" onMouseReleased="#handleChangeVelocity" />
-        <Text layoutX="178.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="45.0" />
-        <Button layoutX="65.0" layoutY="411.0" onAction="#handleStop" text="Stop">
+        <Text fx:id="angleSliderLabel" layoutX="178.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="45.0" />
+        <Button fx:id="stopBtn" layoutX="65.0" layoutY="411.0" onAction="#handleStop" text="Stop">
             <graphic>
                 <Label fx:id="welcomeText1" />
             </graphic>
         </Button>
-        <Button layoutX="118.0" layoutY="411.0" onAction="#handleReset" text="Reset">
+        <Button fx:id="resetBtn" layoutX="118.0" layoutY="411.0" onAction="#handleReset" text="Reset">
             <graphic>
                 <Label fx:id="welcomeText11" />
             </graphic>
@@ -36,22 +37,22 @@
             </graphic>
         </Button>
         <Slider fx:id="velocitySlider" layoutX="431.0" layoutY="417.0" onMouseReleased="#handleChangeVelocity" />
-        <Text layoutX="381.0" layoutY="429.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="45.0" />
-        <Text fx:id="angleLbl" layoutX="843.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="149.0">
+        <Text fx:id="velocitySliderLabel" layoutX="381.0" layoutY="429.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="45.0" />
+        <Text fx:id="angleLbl" layoutX="843.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" wrappingWidth="236.0">
             <font>
                 <Font size="22.0" />
             </font>
         </Text>
-        <Text fx:id="velocityLbl" layoutX="843.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="149.0">
+        <Text fx:id="velocityLbl" layoutX="843.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Velocity: " wrappingWidth="236.0">
             <font>
                 <Font size="22.0" />
             </font>
         </Text>
-        <Text layoutX="577.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gravity:" wrappingWidth="45.0" />
+        <Text fx:id="chooseGravityLabel" layoutX="577.0" layoutY="428.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gravity:" wrappingWidth="45.0" />
         <ToggleButton fx:id="earthToggleButton" layoutX="622.0" layoutY="412.0" mnemonicParsing="false" onAction="#toggleEarth" text="Earth" />
         <ToggleButton fx:id="marsToggleButton" layoutX="672.0" layoutY="412.0" mnemonicParsing="false" onAction="#toggleMars" text="Mars" />
         <ToggleButton fx:id="jupiterToggleButton" layoutX="721.0" layoutY="412.0" mnemonicParsing="false" onAction="#toggleJupiter" text="Jupiter" />
-        <Text fx:id="gravityLbl" layoutX="843.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gravitational Acceleration:" wrappingWidth="174.0">
+        <Text fx:id="gravityLbl" layoutX="843.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gravitational Acceleration:" wrappingWidth="171.0">
             <font>
                 <Font size="22.0" />
             </font>
@@ -65,5 +66,13 @@
         </Text>
         <ToggleButton fx:id="showVectorArrowsBtn" layoutX="784.0" layoutY="443.0" mnemonicParsing="false" onAction="#handleShowVectorArrows" text="Show Vector Arrows" />
       <Button layoutX="463.0" layoutY="588.0" mnemonicParsing="false" onAction="#actionMainMenu" text="Main Menu" />
+
+        <Label fx:id="tooltipLabel" layoutX="150" layoutY="100" prefWidth="400" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" visible="false" wrapText="true" />
+
+        <ImageView fx:id="tooltipImage" fitWidth="200" layoutX="300" layoutY="300" preserveRatio="true" />
+
+        <Button fx:id="nextStepButton" layoutX="150" layoutY="320" onAction="#handleNextStep" text="Next Step" />
+
     </children>
+
 </AnchorPane>
