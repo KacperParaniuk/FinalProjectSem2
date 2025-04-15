@@ -113,19 +113,23 @@ public class ProjectileSimController {
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 //        gc.fillText("Launching at angle: " + angleSlider.getValue(), 50, 50);
 
+        
         x = 10;
         y = canvas.getHeight()-10; // initial (0,0) position
-        v0 = velocitySlider.getValue();
+        if(!isEducationalMode){
+            v0 = velocitySlider.getValue();
 
-        System.out.println(isEducationalMode);
-
-        double angle = Math.toRadians(angleSlider.getValue());
+            double angle = Math.toRadians(angleSlider.getValue());
 //        System.out.println(angle);
-        vx = v0 * cos(angle);
-        vy = -v0 * sin(angle); // negative so that it is upward at first
+            vx = v0 * cos(angle);
+            vy = -v0 * sin(angle); // negative so that it is upward at first
 
-        // ^ this is a unit of speed so we need to convert into pixels.
-
+            // ^ this is a unit of speed so we need to convert into pixels.
+        }
+        else{
+            vx = 25 * cos(Math.toRadians(60));
+            vy = -25 * sin(Math.toRadians(60));
+        }
 
         GraphicsContext gc = canvas.getGraphicsContext2D(); // this gives me my "drawing tool" for the canvas
         // canvas is from javafx that can be used as our drawing board where we will simulate!
@@ -137,7 +141,25 @@ public class ProjectileSimController {
             public void handle(long now){
 //                System.out.println("Timer");
                 update(gc);
+                if(isEducationalMode){
+                    if(stepIndex==5){
+                        if((now-simulationStart)>firstTimeLock){
+                            simulationStop = now;
+                            timer.stop();
+                        }
+                    }
+                    if(stepIndex==6){
+                        System.out.println(now - (simulationStart - simulationStop)+ "After");
+                        System.out.println(timeToTop);
+                        if((now - (simulationStart - simulationStop)>timeToTop)){
+                            System.out.println("STOPPED AT TOP");
+                            timer.stop();
+                        }
+                    }
+                }
+
             }
+            
         };
         timer.start();
 
@@ -149,7 +171,6 @@ public class ProjectileSimController {
             stopped = true;
             timer.stop(); // this is the reason we wanted to make it "global"
         }
-        System.out.println("Stopped");
 
 
 
@@ -165,7 +186,7 @@ public class ProjectileSimController {
         g = 9.81;
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-        System.out.println("Reset");
+
 
 
     }
@@ -181,12 +202,17 @@ public class ProjectileSimController {
     }
 
 
+    private double vySim = 25 * sin(Math.toRadians(60));
+    private long firstTimeLock = (long) (((vySim)/9.81)*100000000);
+    private long timeToTop = (long) (((vySim)/9.81)*1000000000);
 
     public void update(GraphicsContext gc){
         if(y >= canvas.getHeight()-9){ // if the y value gets hits the bottom of the page
+            System.out.println("STOPPED DUE TO UPDATE");
             timer.stop();
             return;
         }
+        
         
 //        if(isVectorArrows){
 //            showVectors(x,y,gc);
@@ -202,8 +228,8 @@ public class ProjectileSimController {
         y += (vy * dt) * metersToPixels;
         vy += g * dt;
 
-        System.out.println(x + " X Component");
-        System.out.println(y + " Y Component");
+//        System.out.println(x + " X Component");
+//        System.out.println(y + " Y Component");
         // no vx component because no drag and vx stays constant
 
     }
@@ -296,8 +322,8 @@ public class ProjectileSimController {
         double angle1 = angle + Math.toRadians(150); // offset for lines making up the arrow
         double angle2 = angle - Math.toRadians(150);
 
-        System.out.println(Math.toDegrees(angle1) + "Angle 1");
-        System.out.println(Math.toDegrees(angle2) + "Angle 2");
+//        System.out.println(Math.toDegrees(angle1) + "Angle 1");
+//        System.out.println(Math.toDegrees(angle2) + "Angle 2");
 
         double x1 = x + size * Math.cos(angle1);
         double y1 = y + Math.abs(size * Math.sin(angle1));
@@ -398,7 +424,6 @@ public class ProjectileSimController {
                 tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/rightTriangle.PNG")));
                 break;
             case 3:
-            case 4:
                 tooltipLabel.setText("The variables we will be using \n" +
                         "V = 25m/s\n" +
                         "Theta = 60°\n" +
@@ -409,10 +434,31 @@ public class ProjectileSimController {
                 nextStepButton.setLayoutX(50);
                 nextStepButton.setLayoutY(540);
                 handleChangeVelocity();
-
+                break;
+            case 4:
+                tooltipLabel.setText("We will need to portion off Vx and Vy using trig! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/angleRightTriangle.PNG")));
+                break;
+            case 5:
+                simulationStart = System.nanoTime();
+                handleStart();
+                break;
+            case 6:
+                simulationStart = System.nanoTime();
+                timer.start();
         }
+        
 
     }
+
+    // now - (now - simulationEndTime) - (firstTimeStop)
 
     public void buildHeightAndDistance(double v, double initialAngle, GraphicsContext gc){
         double y = (Math.pow(v,2)  * Math.pow((Math.sin(initialAngle)),2)) / (2 * g); // angle in radians
@@ -455,6 +501,9 @@ public class ProjectileSimController {
     public void handleShowVectorArrows(ActionEvent actionEvent) {
         isVectorArrows = true;
     }
+
+    long simulationStart;
+    long simulationStop;
 
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
