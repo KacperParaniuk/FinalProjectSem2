@@ -113,7 +113,7 @@ public class ProjectileSimController {
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 //        gc.fillText("Launching at angle: " + angleSlider.getValue(), 50, 50);
 
-        
+        System.out.println(firstTimeLock+ "First lock");
         x = 10;
         y = canvas.getHeight()-10; // initial (0,0) position
         if(!isEducationalMode){
@@ -145,13 +145,14 @@ public class ProjectileSimController {
                     if(stepIndex==5){
                         if((now-simulationStart)>firstTimeLock){
                             simulationStop = now;
+                            firstTimeLock = now - simulationStart;
                             timer.stop();
                         }
                     }
                     if(stepIndex==6){
-                        System.out.println(now - (simulationStart - simulationStop)+ "After");
+                        System.out.println(now - (simulationStart - simulationStop) - simulationSecondStart + firstTimeLock+ 1000000000 +"After");
                         System.out.println(timeToTop);
-                        if((now - (simulationStart - simulationStop)>timeToTop)){
+                        if((now - (simulationStart - simulationStop) - simulationSecondStart + firstTimeLock + 1300000000   >timeToTop)){
                             System.out.println("STOPPED AT TOP");
                             timer.stop();
                         }
@@ -451,7 +452,12 @@ public class ProjectileSimController {
                 handleStart();
                 break;
             case 6:
-                simulationStart = System.nanoTime();
+                buildHeightAndDistance(25, Math.toRadians(60), canvas.getGraphicsContext2D());
+                simulationSecondStart = System.nanoTime();
+                timer.start();
+                break;
+            case 7:
+                buildHeightAndDistance(25, Math.toRadians(60), canvas.getGraphicsContext2D());
                 timer.start();
         }
         
@@ -466,8 +472,17 @@ public class ProjectileSimController {
         double x = (Math.pow(v, 2) * Math.sin(2*initialAngle)/g);
         double actualRange = 10 + x * metersToPixels;
         gc.setFill(Color.BLACK);
-        gc.fillText("Max Height: "+ roundToOneDecimalPlace(y) + " meters", 10, actualMaxHeight-10);
-        gc.fillText("Range " + roundToOneDecimalPlace(x) +" meters", actualRange, canvas.getHeight()-20);
+        if(isEducationalMode){
+            if(stepIndex == 6){
+                gc.fillText("Max Height: "+ roundToOneDecimalPlace(y) + " meters", 10, actualMaxHeight-10);
+            } else if (stepIndex ==7) {
+                gc.fillText("Range " + roundToOneDecimalPlace(x) +" meters", actualRange, canvas.getHeight()-20);
+            }
+        }else{
+            gc.fillText("Max Height: "+ roundToOneDecimalPlace(y) + " meters", 10, actualMaxHeight-10);
+            gc.fillText("Range " + roundToOneDecimalPlace(x) +" meters", actualRange, canvas.getHeight()-20);
+        }
+
 
     }
 
@@ -504,6 +519,7 @@ public class ProjectileSimController {
 
     long simulationStart;
     long simulationStop;
+    long simulationSecondStart;
 
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
