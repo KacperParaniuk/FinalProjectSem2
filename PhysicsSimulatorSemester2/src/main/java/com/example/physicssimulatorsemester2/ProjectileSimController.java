@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
@@ -144,15 +145,15 @@ public class ProjectileSimController {
                 if(isEducationalMode){
                     if(stepIndex==5){
                         if((now-simulationStart)>firstTimeLock){
+                            createGravityVector(gc);
                             simulationStop = now;
                             firstTimeLock = now - simulationStart;
                             timer.stop();
                         }
                     }
                     if(stepIndex==6){
-                        System.out.println(now - (simulationStart - simulationStop) - simulationSecondStart + firstTimeLock+ 1000000000 +"After");
-                        System.out.println(timeToTop);
                         if((now - (simulationStart - simulationStop) - simulationSecondStart + firstTimeLock + 1300000000   >timeToTop)){
+                            createGravityVector(gc);
                             System.out.println("STOPPED AT TOP");
                             timer.stop();
                         }
@@ -206,6 +207,7 @@ public class ProjectileSimController {
     private double vySim = 25 * sin(Math.toRadians(60));
     private long firstTimeLock = (long) (((vySim)/9.81)*100000000);
     private long timeToTop = (long) (((vySim)/9.81)*1000000000);
+    private double timeSim = (2 * 25 * sin(Math.toRadians(60))) / (g);
 
     public void update(GraphicsContext gc){
         if(y >= canvas.getHeight()-9){ // if the y value gets hits the bottom of the page
@@ -359,15 +361,15 @@ public class ProjectileSimController {
 
 //    public void showVectors(double x, double y, GraphicsContext gc){
 //        double size = 10;
-//        double endX = x; 
+//        double endX = x;
 //        double endY = y+size;
-//        
+//
 //        gc.setStroke(Color.RED);
 //        gc.setLineWidth(5);
 //        gc.strokeLine(x, y, endX, endY);
 //
 //        drawArrowHead(gc, endX,endY,-90);
-//        
+//
 //    }
 
     private int stepIndex = 0;
@@ -446,25 +448,78 @@ public class ProjectileSimController {
                         "\n" +
                         "\n");
                 tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/angleRightTriangle.PNG")));
+                tooltipImage.setLayoutY(460);
+                tooltipImage.setLayoutX(150);
+
                 break;
             case 5:
+                tooltipLabel.setText("The ball always experiences a gravitational force \n" +
+                        "downward creating a parabolic path");
                 simulationStart = System.nanoTime();
                 handleStart();
+                tooltipImage.setImage(null);
                 break;
             case 6:
+                tooltipLabel.setText("The ball always experiences a gravitational force \n" +
+                        "downward creating a parabolic path \n" +
+                        "In order to find the maximum height we manipulate the kinematics equations \n" +
+                        "and it's important to notice that there are multiple ways to find the same variable\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
+                nextStepButton.setLayoutY(700);
                 buildHeightAndDistance(25, Math.toRadians(60), canvas.getGraphicsContext2D());
                 simulationSecondStart = System.nanoTime();
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/maximumHeightFormula.PNG")));
+                tooltipImage.setLayoutY(600);
                 timer.start();
                 break;
             case 7:
+                tooltipLabel.setText("The ball always experiences a gravitational force \n" +
+                        "downward creating a parabolic path \n" +
+                        "We can also find the range of the parabolic path the ball goes using the kinematics equations and basic algebra \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
                 buildHeightAndDistance(25, Math.toRadians(60), canvas.getGraphicsContext2D());
                 timer.start();
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/rangeFormula.PNG")));
+                break;
+            case 8:
+                tooltipLabel.setText("Lastly, we can find the time of travel using as well the kinematics eqs \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n");
+                showTime(canvas.getGraphicsContext2D(), x, y);
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/timeFormula.PNG")));
+                tooltipImage.setLayoutY(500);
+                break;
+
+            case 9:
+                tooltipLabel.setText("That's it! Congratulations on finishing the 2D Kinematics lesson! \n" +
+                        "Go into sandbox mode to play around with projectile motion! ");
+                tooltipImage.setImage(null);
+                break;
+            case 10:
+                actionMainMenu();
+                break;
+
         }
         
 
     }
 
-    // now - (now - simulationEndTime) - (firstTimeStop)
+
 
     public void buildHeightAndDistance(double v, double initialAngle, GraphicsContext gc){
         double y = (Math.pow(v,2)  * Math.pow((Math.sin(initialAngle)),2)) / (2 * g); // angle in radians
@@ -486,6 +541,12 @@ public class ProjectileSimController {
 
     }
 
+    public void showTime(GraphicsContext gc, double x, double y){
+        gc.setFill(Color.BLACK);
+        gc.setFont(new Font("Arial", 20));
+        gc.fillText("Time: " + roundToOneDecimalPlace(timeSim) + " seconds", x + 10, y);
+    }
+
     public double roundToOneDecimalPlace(double val){
         return (Math.round(val * 10)) / 10.0;
     }
@@ -504,6 +565,30 @@ public class ProjectileSimController {
 
 
     }
+
+    public void createGravityVector(GraphicsContext gc){
+        double size = 50;
+        double endX = x;
+        double endY = y+size;
+
+        gc.setStroke(Color.BLACK);
+        gc.setLineWidth(3);
+        gc.strokeLine(x, y+8, endX, endY);
+
+
+        double arrowX1 = endX + (Math.sin(Math.toRadians(60)) * 5);
+        double arrowX2 = endX - (Math.sin(Math.toRadians(60)) * 5);
+        double arrowY1 = endY - (Math.cos(Math.toRadians(60))* 5);
+
+        gc.strokeLine(endX,endY, arrowX1,arrowY1);
+        gc.strokeLine(endX,endY,arrowX2,arrowY1);
+
+        gc.setFill(Color.BLACK);
+        gc.setFont(new Font("Arial", 14));
+        gc.fillText("Fg", endX + 10, endY);
+
+    }
+
 
 
 

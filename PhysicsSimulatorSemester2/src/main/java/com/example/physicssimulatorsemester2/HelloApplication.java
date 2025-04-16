@@ -35,8 +35,6 @@ public class HelloApplication extends Application {
             controller.setEducationalMode(educationalMode);
         }
 
-
-
         Scene scene = new Scene(root, 1000, 1000);
         primaryStage.setTitle(title);
         primaryStage.setScene(scene);
