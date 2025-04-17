@@ -33,6 +33,8 @@ public class ProjectileSimController {
     public Button nextStepButton;
     public Label tooltipLabel;
     public ImageView tooltipImage;
+    public Text currentVelocityYLabel, currentVelocityXLabel, currentXLabel, currentYLabel;
+    public ToggleButton currentVal;
     @FXML
     private Canvas canvas;
 
@@ -67,6 +69,10 @@ public class ProjectileSimController {
     public void initialize(){
         createKinematicsSimulationSpace();
 
+        currentXLabel.setVisible(false);
+        currentVelocityXLabel.setVisible(false);
+        currentVelocityYLabel.setVisible(false);
+        currentYLabel.setVisible(false);
         resumeBtn.setVisible(false);
 
         gravityLbl.setText("Gravitational Acceleration: 9.81 m/s2");
@@ -114,7 +120,7 @@ public class ProjectileSimController {
 //        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 //        gc.fillText("Launching at angle: " + angleSlider.getValue(), 50, 50);
 
-        System.out.println(firstTimeLock+ "First lock");
+        startBtn.setDisable(true);
         x = 10;
         y = canvas.getHeight()-10; // initial (0,0) position
         if(!isEducationalMode){
@@ -182,6 +188,7 @@ public class ProjectileSimController {
         if(timer!= null){
             timer.stop();
         }
+        startBtn.setDisable(false);
         earthToggleButton.setVisible(true);
         marsToggleButton.setVisible(true);
         jupiterToggleButton.setVisible(true);
@@ -212,11 +219,21 @@ public class ProjectileSimController {
     public void update(GraphicsContext gc){
         if(y >= canvas.getHeight()-9){ // if the y value gets hits the bottom of the page
             System.out.println("STOPPED DUE TO UPDATE");
+            startBtn.setDisable(false);
             timer.stop();
             return;
         }
-        
-        
+
+
+
+        if(showCurrentValue){
+            currentXLabel.setText("X: " + roundToOneDecimalPlace(x/metersToPixels) + " meters");
+            currentVelocityXLabel.setText("Vx: " + roundToOneDecimalPlace(vx) + " m/s");
+            currentVelocityYLabel.setText("Vy: " + roundToOneDecimalPlace(vy) + " m/s");
+            currentYLabel.setText("Y: " + roundToOneDecimalPlace(y/metersToPixels) + " meters");
+        }
+
+
 //        if(isVectorArrows){
 //            showVectors(x,y,gc);
 //        }
@@ -624,6 +641,11 @@ public class ProjectileSimController {
             startBtn.setVisible(false);
             resetBtn.setVisible(false);
             chooseGravityLabel.setVisible(false);
+            currentXLabel.setVisible(false);
+            currentVelocityXLabel.setVisible(false);
+            currentVelocityYLabel.setVisible(false);
+            currentYLabel.setVisible(false);
+            currentVal.setVisible(false);
 
             tooltipLabel.setVisible(true);
             tooltipLabel.setText("Step 1: Welcome top the Projectile Motion Simulation! \n"
@@ -648,6 +670,24 @@ public class ProjectileSimController {
         }
     }
 
+    private boolean showCurrentValue = false;
+    public void handleEnableCurrentVal(ActionEvent actionEvent) {
+        showCurrentValue = currentVal.isSelected();
+        if(showCurrentValue){
+            currentXLabel.setVisible(true);
+            currentVelocityXLabel.setVisible(true);
+            currentVelocityYLabel.setVisible(true);
+            currentYLabel.setVisible(true);
+        }
+        else{
+            currentXLabel.setVisible(false);
+            currentVelocityXLabel.setVisible(false);
+            currentVelocityYLabel.setVisible(false);
+            currentYLabel.setVisible(false);
+        }
+    }
+
+
     public void actionMainMenu(){
         try {
 
@@ -656,6 +696,7 @@ public class ProjectileSimController {
             e.printStackTrace();
         }
     }
+
 
 
 }

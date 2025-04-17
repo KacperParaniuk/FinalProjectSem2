@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1019.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.ProjectileSimController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="627.0" prefWidth="1143.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.ProjectileSimController">
     <children>
         <Button fx:id="startBtn" layoutX="14.0" layoutY="411.0" onAction="#handleStart" text="Start" textFill="#030303">
             <graphic>
@@ -59,7 +59,7 @@
         </Text>
         <ToggleButton fx:id="showBtn" layoutX="784.0" layoutY="411.0" mnemonicParsing="false" onAction="#handleShowHeightDistance" text="Show Max Height &amp; Distance" />
         <ToggleButton fx:id="handleDragBtn" layoutX="784.0" layoutY="473.0" mnemonicParsing="false" onAction="#handleAddDrag" text="Add Drag" />
-        <Text fx:id="currentVelocityLabel" layoutX="843.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Velocity: " wrappingWidth="149.0">
+        <Text fx:id="currentVelocityXLabel" layoutX="843.0" layoutY="176.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Vx: " wrappingWidth="291.0">
             <font>
                 <Font size="13.0" />
             </font>
@@ -72,6 +72,22 @@
         <ImageView fx:id="tooltipImage" fitWidth="200" layoutX="300" layoutY="300" preserveRatio="true" />
 
         <Button fx:id="nextStepButton" layoutX="150" layoutY="320" onAction="#handleNextStep" text="Next Step" />
+      <Text fx:id="currentVelocityYLabel" layoutX="843.0" layoutY="195.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Vy: " wrappingWidth="291.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="currentXLabel" layoutX="843.0" layoutY="213.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current X: " wrappingWidth="291.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="currentYLabel" layoutX="843.0" layoutY="232.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Y: " wrappingWidth="291.0">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Text>
+      <ToggleButton fx:id="currentVal" layoutX="961.0" layoutY="411.0" mnemonicParsing="false" onAction="#handleEnableCurrentVal" text="Toggle Current Values" />
 
     </children>
 
