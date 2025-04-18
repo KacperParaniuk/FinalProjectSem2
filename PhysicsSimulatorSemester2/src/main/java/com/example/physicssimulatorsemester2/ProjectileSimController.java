@@ -21,7 +21,7 @@ import java.util.ArrayList;
 
 import static java.lang.Math.*;
 
-public class ProjectileSimController {
+public class ProjectileSimController extends Drawing {
     public Button resumeBtn, startBtn, stopBtn, resetBtn;
     public Text angleLbl, velocityLbl;
     public ToggleButton earthToggleButton, marsToggleButton, jupiterToggleButton;
@@ -332,30 +332,10 @@ public class ProjectileSimController {
         gc.setLineWidth(5);
         gc.strokeLine(initialX, initialY, endX, endY);
 
-        drawArrowHead(gc, endX,endY,angle);
+        super.drawArrowHead(gc, endX,endY,angle);
 
     }
 
-    public void drawArrowHead(GraphicsContext gc, double x, double y, double angle){
-        double size = 10; // size of arrow lines
-
-        double angle1 = angle + Math.toRadians(150); // offset for lines making up the arrow
-        double angle2 = angle - Math.toRadians(150);
-
-//        System.out.println(Math.toDegrees(angle1) + "Angle 1");
-//        System.out.println(Math.toDegrees(angle2) + "Angle 2");
-
-        double x1 = x + size * Math.cos(angle1);
-        double y1 = y + Math.abs(size * Math.sin(angle1));
-        double x2 = x + size * Math.cos(angle2);
-        double y2 = y + Math.abs(size * Math.sin(angle2));
-
-        gc.strokeLine(x,y, x1,y1);
-        gc.strokeLine(x,y,x2,y2);
-
-
-
-    }
 
     public void buildTrajectoryPath(GraphicsContext gc , double vx, double vy){
         double xT = 10;
@@ -396,8 +376,6 @@ public class ProjectileSimController {
         if(stepIndex<10){
             stepIndex++;
             updateLectureStep();
-
-
 
         }
     }
@@ -564,9 +542,7 @@ public class ProjectileSimController {
         gc.fillText("Time: " + roundToOneDecimalPlace(timeSim) + " seconds", x + 10, y);
     }
 
-    public double roundToOneDecimalPlace(double val){
-        return (Math.round(val * 10)) / 10.0;
-    }
+
 
     private boolean showHeightAndDistance = false;
     public void handleShowHeightDistance(ActionEvent actionEvent) {
@@ -687,15 +663,6 @@ public class ProjectileSimController {
         }
     }
 
-
-    public void actionMainMenu(){
-        try {
-
-            HelloApplication.loadScene("MainMenu.fxml", "Physics Simulator", false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
 
 

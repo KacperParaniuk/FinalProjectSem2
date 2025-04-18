@@ -7,18 +7,18 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
-import javafx.scene.input.MouseDragEvent;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
-import javax.security.auth.login.AccountNotFoundException;
 import java.io.IOException;
 
-public class PendulumSimController {
+public class PendulumSimController extends Drawing {
     public Slider lengthSlider, angleSlider;
     public Canvas canvas;
     public Button startBtn, stopBtn, resetBtn, resumeBtn;
     public Text angleLbl, lengthLbl;
+    public ToggleButton idealPendBtn, realisticBtn;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
@@ -33,7 +33,7 @@ public class PendulumSimController {
     private double pivotX = 387;
     private double pivotY = 80;
     private double bobRadius = .175 * metersToPixels;
-    private double boxX = pivotX + length * Math.sin(angle);
+    private double bobX = pivotX + length * Math.sin(angle);
     private double bobY = pivotY + length * Math.cos(angle);
     private double angularAcceleration =  -1 * (g/2) * Math.sin(angle);
     private double angularVelocity = angularAcceleration * dt;
@@ -50,25 +50,30 @@ public class PendulumSimController {
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.GREY);
         gc.fillRect(0, 0, canvas.getWidth(),80);
+        resumeBtn.setVisible(false);
 
         drawRope(pivotX, pivotY, pivotX, pivotY+(length)); // 2 meters long
 
         drawBall(pivotX, 80 + (length));
 
+    }
 
+    public void resetPendulum(){
+        length = 2 * metersToPixels;
+        bobX = pivotX;
+        angle = Math.toRadians(0);
+        bobY = 80 + length;
+        angularVelocity = 0;
+        angularAcceleration=0;
 
-
-
+        drawRope(pivotX, pivotY, pivotX, pivotY+(length)); // 2 meters long
+        drawBall(pivotX, 80 + length);
     }
 
     public void clearCanvas(){
         gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // clearing canvas
         gc.setFill(Color.GREY);
         gc.fillRect(0, 0, canvas.getWidth(),80);
-
-
-
-
 
     }
 
@@ -86,16 +91,17 @@ public class PendulumSimController {
     }
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
+
     }
 
     @FXML
-    public void handleStart(ActionEvent actionEvent) {
+    public void handleStart() {
         clearCanvas();
-        drawRope(pivotX, pivotY, boxX, bobY);
-        drawBall(boxX, bobY);
+        drawRope(pivotX, pivotY, bobX, bobY);
+        drawBall(bobX, bobY);
         angularAcceleration =  -1 * (g/ (length/metersToPixels)) * Math.sin(angle);
 
-
+        startBtn.setDisable(true);
 
 
 
@@ -112,8 +118,8 @@ public class PendulumSimController {
     public void update(){
         // Euler integration loop
         clearCanvas();
-        drawRope(pivotX, pivotY, boxX, bobY);
-        drawBall(boxX, bobY);
+        drawRope(pivotX, pivotY, bobX, bobY);
+        drawBall(bobX, bobY);
 
         if(angle<0){
             angularVelocity -= angularAcceleration * dt;
@@ -122,30 +128,57 @@ public class PendulumSimController {
             angularVelocity += angularAcceleration * dt;
         }
 
+        if(realisticBtn.isSelected()){
+            angularVelocity *= 0.995;
+        }
+
         angle += angularVelocity * dt;
 
 
-        boxX = pivotX + length * Math.sin(angle);
+
+
+        bobX = pivotX + length * Math.sin(angle);
         bobY = pivotY + length * Math.cos(angle);
 
     }
 
+    private boolean stopped = false;
+
     public void handleStop(ActionEvent actionEvent) {
-        timer.stop();
+        if(timer != null){
+            resumeBtn.setVisible(true);
+            stopped = true;
+            timer.stop();
+        }
+        stopBtn.setDisable(true);
+        resumeBtn.setVisible(true);
     }
 
     public void handleReset(ActionEvent actionEvent) {
         clearCanvas();
+        resetPendulum();
+        if(timer!= null){
+            timer.stop();
+        }
+        angleSlider.setValue(0);
+        lengthSlider.setValue(0);
+        lengthLbl.setText("Length: ");
+        angleLbl.setText("Angle: ");
+        startBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+        stopBtn.setDisable(false);
 
-        // initial position
-        drawRope(pivotX, pivotY, pivotX, pivotY+(length));
-        drawBall(pivotX, 80 + (length));
 
     }
 
-    public void handleResume(ActionEvent actionEvent) {
-        drawRope(pivotX, pivotY, pivotX, pivotY+(length));
-        drawBall(pivotX, 80 + (length));
+    public void handleResume(){
+        if(timer != null && stopped){
+            stopped = false;
+            timer.start();
+        }
+        stopBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+
     }
 
 
@@ -155,11 +188,11 @@ public class PendulumSimController {
         lengthLbl.setText("Length: " + roundToOneDecimalPlace(length) + " meters");
         length = length * metersToPixels;
 
-        boxX = pivotX + length * Math.sin(angle);
+        bobX = pivotX + length * Math.sin(angle);
         bobY = pivotY + length * Math.cos(angle);
 
-        drawRope(pivotX, pivotY, boxX, bobY);
-        drawBall(boxX, bobY);
+        drawRope(pivotX, pivotY, bobX, bobY);
+        drawBall(bobX, bobY);
     }
 
 
@@ -168,28 +201,13 @@ public class PendulumSimController {
         angle = Math.toRadians(angleSlider.getValue());
         angleLbl.setText("Angle: " + roundToOneDecimalPlace(angleSlider.getValue())+ "°");
 
-        boxX = pivotX + length * Math.sin(angle);
+        bobX = pivotX + length * Math.sin(angle);
         bobY = pivotY + length * Math.cos(angle);
 
-        drawRope(pivotX, pivotY, boxX, bobY);
-        drawBall(boxX, bobY);
+        drawRope(pivotX, pivotY, bobX, bobY);
+        drawBall(bobX, bobY);
 
 
-    }
-    public double roundToOneDecimalPlace(double val){
-        return (Math.round(val * 10)) / 10.0;
-    }
-
-
-
-
-
-    public void actionMainMenu(){
-        try {
-            HelloApplication.loadScene("MainMenu.fxml", "Physics Simulator", false);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
 
