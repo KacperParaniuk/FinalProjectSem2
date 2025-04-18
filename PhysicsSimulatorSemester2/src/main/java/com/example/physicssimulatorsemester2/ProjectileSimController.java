@@ -332,7 +332,7 @@ public class ProjectileSimController extends Drawing {
         gc.setLineWidth(5);
         gc.strokeLine(initialX, initialY, endX, endY);
 
-        super.drawArrowHead(gc, endX,endY,angle);
+        drawArrowhead(gc, initialX,initialY,endX,endY);
 
     }
 

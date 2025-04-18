@@ -6,26 +6,31 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PendulumSimController extends Drawing {
-    public Slider lengthSlider, angleSlider;
+    public Slider lengthSlider, angleSlider, massSlider;
     public Canvas canvas;
     public Button startBtn, stopBtn, resetBtn, resumeBtn;
-    public Text angleLbl, lengthLbl;
+    public Text angleLbl, lengthLbl, massLbl;
     public ToggleButton idealPendBtn, realisticBtn;
+    public CheckBox gravityCheckBox, gComponentCheckBox, restoringCheckBox, pathCheckBox, showAllCheckBox;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
 
     private double g = 9.81;
-    private double dt = 0.016; // 60 fps
-
+    private double dt = 0.016;// 60 fps
+    private double mass = .5;
     // pendulum state
 
     private double angle = Math.toRadians(0);
@@ -118,6 +123,29 @@ public class PendulumSimController extends Drawing {
     public void update(){
         // Euler integration loop
         clearCanvas();
+
+        if(showAllCheckBox.isSelected()){
+            drawRestoringForce(false, true);
+            drawGravityVectors(true,true);
+        }
+        else{
+            if(gravityCheckBox.isSelected() && gComponentCheckBox.isSelected()){
+                drawGravityVectors(true,true);
+            }
+            if(gravityCheckBox.isSelected()){
+                drawGravityVectors(false,true);
+            }
+            if(gComponentCheckBox.isSelected()){
+                drawGravityVectors(true,false);
+            }
+            if(restoringCheckBox.isSelected()){
+                drawRestoringForce(false, true);
+            }
+        }
+        if(pathCheckBox.isSelected()){
+            drawRestoringForce(true, false);
+        }
+
         drawRope(pivotX, pivotY, bobX, bobY);
         drawBall(bobX, bobY);
 
@@ -135,12 +163,108 @@ public class PendulumSimController extends Drawing {
         angle += angularVelocity * dt;
 
 
-
-
         bobX = pivotX + length * Math.sin(angle);
         bobY = pivotY + length * Math.cos(angle);
 
     }
+
+
+
+    private double forceScale = 30;
+
+    private ArrayList<Point> pendulumPoints = new ArrayList<>();
+
+    private void drawRestoringForce(boolean path, boolean restoring){
+        // Compute angle and force
+        double restoringForce = Math.abs(mass * g * Math.sin(angle)); // in Newtons need to convert
+//        System.out.println(restoringForce);
+        double fx = forceScale * restoringForce * Math.cos(angle + Math.PI / 2);
+        double fy = forceScale * restoringForce * Math.sin(angle + Math.PI / 2);
+
+        double arrowX = bobX;
+        double arrowY = bobY;
+
+        double endX = arrowX + fx;
+        double endY = arrowY + fy;
+
+        if(path){
+            pendulumPoints.add(new Point(arrowX, arrowY));
+
+            gc.setStroke(Color.LIGHTBLUE);
+            for(Point pt: pendulumPoints){
+                gc.fillOval(pt.getX()-2, pt.getY()-2, 4,4);
+            }
+
+        }
+
+
+//        gc.setStroke(Color.ORANGE);
+//        gc.strokeLine(bobX, bobY, bobX + 50 * Math.cos(angle), bobY + 50 * Math.sin(angle));
+//
+//        gc.setStroke(Color.RED);
+//        gc.strokeLine(bobX, bobY, bobX + 50 * Math.cos(angle + Math.PI / 2), bobY + 50 * Math.sin(angle + Math.PI / 2));
+
+
+        if(restoring){
+            gc.setStroke(Color.BLUE);
+            gc.setLineWidth(2);
+            gc.strokeLine(arrowX, arrowY, endX, endY);
+
+            drawArrowhead(gc, arrowX, arrowY, endX, endY);
+
+            gc.setFill(Color.BLUE);
+            gc.setFont(new Font("Arial", 12));
+            gc.fillText("F_restoring", endX + 5, endY);
+        }
+
+
+    }
+
+    public void drawGravityVectors(boolean vectorComponents, boolean drawGravity){
+        double forceGravity = mass * g;
+        double vectorY = bobY + 20 *forceGravity;
+
+        if(drawGravity){
+            gc.setStroke(Color.RED);
+            gc.setLineWidth(2);
+            gc.strokeLine(bobX, bobY, bobX, vectorY);
+            drawArrowhead(gc, bobX, bobY, bobX, vectorY);
+
+            gc.setFill(Color.RED);
+            gc.setFont(new Font("Arial", 12));
+            gc.fillText("F_gravity", bobX + 5, vectorY);
+        }
+
+        if(vectorComponents){
+            double vectorComponentX = bobX + -1*(10 * forceGravity * Math.sin(angle));
+
+            gc.setStroke(Color.GREEN);
+            gc.setLineWidth(2);
+            gc.strokeLine(bobX, bobY, vectorComponentX, bobY);
+            drawArrowhead(gc, bobX, bobY, vectorComponentX, bobY);
+
+            gc.setFill(Color.GREEN);
+            gc.setFont(new Font("Arial", 12));
+            gc.fillText("Fx_gravity", vectorComponentX + 5, bobY);
+
+
+            double vectorComponentY = bobY + Math.abs(10 * forceGravity * Math.cos(angle));
+
+            gc.setStroke(Color.GREEN);
+            gc.setLineWidth(2);
+            gc.strokeLine(bobX, bobY, bobX, vectorComponentY);
+            drawArrowhead(gc, bobX, bobY, bobX, vectorComponentY);
+
+            gc.setFill(Color.GREEN);
+            gc.setFont(new Font("Arial", 12));
+            gc.fillText("Fy_gravity", bobX + 5, vectorComponentY);
+
+
+
+        }
+
+    }
+
 
     private boolean stopped = false;
 
@@ -167,9 +291,11 @@ public class PendulumSimController extends Drawing {
         startBtn.setDisable(false);
         resumeBtn.setVisible(false);
         stopBtn.setDisable(false);
+        pendulumPoints.clear();
 
 
     }
+
 
     public void handleResume(){
         if(timer != null && stopped){
@@ -210,6 +336,20 @@ public class PendulumSimController extends Drawing {
 
     }
 
+    public void actionChangeMass() {
+        mass = massSlider.getValue()/10.0;
+        massLbl.setText("Mass: "+ roundToOneDecimalPlace(mass) + "kg");
+        bobRadius = mass*10.0;
+        clearCanvas();
+        drawRope(pivotX, pivotY, bobX, bobY);
+        drawBall(bobX, bobY);
+    }
 
+
+
+
+    public void resetPath(MouseEvent mouseEvent) {
+        pendulumPoints.clear();
+    }
 
 }

@@ -14,27 +14,20 @@ public class Drawing {
         }
     }
 
+    public void drawArrowhead(GraphicsContext gc, double x1, double y1, double x2, double y2) {
+        double angle = Math.atan2(y2 - y1, x2 - x1);
+        double arrowLength = 10;
+        double arrowAngle = Math.toRadians(20);
 
-    public void drawArrowHead(GraphicsContext gc, double x, double y, double angle){
-        double size = 10; // size of arrow lines
+        double x3 = x2 - arrowLength * Math.cos(angle - arrowAngle);
+        double y3 = y2 - arrowLength * Math.sin(angle - arrowAngle);
+        double x4 = x2 - arrowLength * Math.cos(angle + arrowAngle);
+        double y4 = y2 - arrowLength * Math.sin(angle + arrowAngle);
 
-        double angle1 = angle + Math.toRadians(150); // offset for lines making up the arrow
-        double angle2 = angle - Math.toRadians(150);
-
-//        System.out.println(Math.toDegrees(angle1) + "Angle 1");
-//        System.out.println(Math.toDegrees(angle2) + "Angle 2");
-
-        double x1 = x + size * Math.cos(angle1);
-        double y1 = y + Math.abs(size * Math.sin(angle1));
-        double x2 = x + size * Math.cos(angle2);
-        double y2 = y + Math.abs(size * Math.sin(angle2));
-
-        gc.strokeLine(x,y, x1,y1);
-        gc.strokeLine(x,y,x2,y2);
-
-
-
+        gc.strokeLine(x2, y2, x3, y3);
+        gc.strokeLine(x2, y2, x4, y4);
     }
+
 
     public double roundToOneDecimalPlace(double val){
         return (Math.round(val * 10)) / 10.0;
