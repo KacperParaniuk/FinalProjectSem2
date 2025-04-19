@@ -32,7 +32,7 @@ public class MainMenuController {
 
     public void launchPendulum(ActionEvent actionEvent) {
         try {
-            HelloApplication.loadScene("PendulumSim.fxml", "Projectile Simulator", isEducationalMode);
+            HelloApplication.loadScene("PendulumSim.fxml", "Pendulum Simulator", isEducationalMode);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -43,7 +43,7 @@ public class MainMenuController {
 
     public void launchSpring(ActionEvent actionEvent) {
         try {
-            HelloApplication.loadScene("SpringSim.fxml", "Projectile Simulator", isEducationalMode);
+            HelloApplication.loadScene("SpringSim.fxml", "Spring Simulator", isEducationalMode);
         } catch (IOException e) {
             e.printStackTrace();
         }

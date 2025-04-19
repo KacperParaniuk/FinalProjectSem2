@@ -218,10 +218,6 @@ public class PendulumSimController extends Drawing {
         graphController.totalSeries.getData().add(new XYChart.Data<>(timeElapsed, TE));
         graphController.angleSeries.getData().add(new XYChart.Data<>(timeElapsed, angleDeg));
 
-
-
-
-
     }
 
 
