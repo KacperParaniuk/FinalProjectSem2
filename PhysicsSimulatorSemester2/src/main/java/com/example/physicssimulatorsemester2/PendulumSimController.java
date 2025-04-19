@@ -3,8 +3,12 @@ package com.example.physicssimulatorsemester2;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
@@ -13,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,6 +35,7 @@ public class PendulumSimController extends Drawing {
 
     private double g = 9.81;
     private double dt = 0.016;// 60 fps
+    private double graphInterval = 200_000_000.0;
     private double mass = .5;
     // pendulum state
 
@@ -44,11 +50,18 @@ public class PendulumSimController extends Drawing {
     private double angularVelocity = angularAcceleration * dt;
 
 
+    // Graph Data
+
+    private double timeElapsed = 0;
+    private double KE;
+    private double PE;
+    private double height;
+    private double TE;
 
     private javafx.animation.AnimationTimer timer;
 
     private GraphicsContext gc;
-
+    private GraphWindowControllerPendulum graphController;
 
 
     public void initialize(){
@@ -99,8 +112,10 @@ public class PendulumSimController extends Drawing {
 
     }
 
+    private double updateGraphTimeInterval = 0;
     @FXML
     public void handleStart() {
+        updateGraphTimeInterval = System.nanoTime();
         clearCanvas();
         drawRope(pivotX, pivotY, bobX, bobY);
         drawBall(bobX, bobY);
@@ -113,7 +128,16 @@ public class PendulumSimController extends Drawing {
         timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
+                // animation
                 update();
+
+                // graph update
+                if(graphController != null){
+                    if(now - updateGraphTimeInterval > graphInterval){
+                        updateGraphTimeInterval = now;
+                        updateGraphs();
+                    }
+                }
             }
         };
         timer.start();
@@ -122,6 +146,7 @@ public class PendulumSimController extends Drawing {
 
     public void update(){
         // Euler integration loop
+        timeElapsed +=dt;
         clearCanvas();
 
         if(showAllCheckBox.isSelected()){
@@ -166,6 +191,37 @@ public class PendulumSimController extends Drawing {
         bobX = pivotX + length * Math.sin(angle);
         bobY = pivotY + length * Math.cos(angle);
 
+
+
+    }
+
+    private int maxPoints = 150;
+
+    public void updateGraphs(){
+
+        if (graphController.kineticSeries.getData().size() > maxPoints) {
+            graphController.kineticSeries.getData().removeFirst();
+            graphController.potentialSeries.getData().removeFirst();
+            graphController.totalSeries.getData().removeFirst();
+            graphController.angleSeries.getData().removeFirst();
+        }
+
+        height = length * (1 - Math.cos(angle)); // l - lcosθ or (l(1-cosθ))
+        PE = mass * g * height;
+        KE = .5 * mass * Math.pow(length*angularVelocity, 2);
+        TE = PE + KE;
+
+        double angleDeg = Math.toDegrees(angle);
+
+        graphController.kineticSeries.getData().add(new XYChart.Data<>(timeElapsed, KE));
+        graphController.potentialSeries.getData().add(new XYChart.Data<>(timeElapsed, PE));
+        graphController.totalSeries.getData().add(new XYChart.Data<>(timeElapsed, TE));
+        graphController.angleSeries.getData().add(new XYChart.Data<>(timeElapsed, angleDeg));
+
+
+
+
+
     }
 
 
@@ -174,7 +230,7 @@ public class PendulumSimController extends Drawing {
 
     private ArrayList<Point> pendulumPoints = new ArrayList<>();
 
-    private void drawRestoringForce(boolean path, boolean restoring){
+    public void drawRestoringForce(boolean path, boolean restoring){
         // Compute angle and force
         double restoringForce = Math.abs(mass * g * Math.sin(angle)); // in Newtons need to convert
 //        System.out.println(restoringForce);
@@ -345,11 +401,27 @@ public class PendulumSimController extends Drawing {
         drawBall(bobX, bobY);
     }
 
-
-
-
     public void resetPath(MouseEvent mouseEvent) {
         pendulumPoints.clear();
     }
+
+
+
+    @FXML
+    private void openGraphPopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("PendulumGraphWindow.fxml"));
+        Parent root = loader.load();
+
+        GraphWindowControllerPendulum controller = loader.getController();
+
+        Stage graphStage = new Stage();
+        graphStage.setTitle("Pendulum Graphs");
+        graphStage.setScene(new Scene(root, 800, 600));
+        graphStage.show();
+
+        // OPTIONAL: store reference to controller to update the graphs
+        this.graphController = controller;
+    }
+
 
 }

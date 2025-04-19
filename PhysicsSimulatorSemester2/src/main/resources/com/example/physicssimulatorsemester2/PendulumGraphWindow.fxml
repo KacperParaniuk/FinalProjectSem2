@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.physicssimulatorsemester2.GraphWindowControllerPendulum">
+    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10"
+          AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+
+        <LineChart fx:id="energyChart" title="Energy vs Time">
+            <xAxis><NumberAxis label="Time (s)" /></xAxis>
+            <yAxis><NumberAxis label="Energy (J)" /></yAxis>
+        </LineChart>
+
+        <LineChart fx:id="angleChart" title="Angle vs Time">
+            <xAxis><NumberAxis label="Time (s)" /></xAxis>
+            <yAxis><NumberAxis label="Angle (°)" /></yAxis>
+        </LineChart>
+    </VBox>
+</AnchorPane>

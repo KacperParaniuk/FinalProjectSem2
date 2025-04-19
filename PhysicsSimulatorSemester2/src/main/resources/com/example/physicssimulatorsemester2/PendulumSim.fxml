@@ -50,5 +50,6 @@
          </font>
       </Text>
       <Text layoutX="83.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mass:" />
+      <ToggleButton fx:id="openGraphBtn" layoutX="644.0" layoutY="469.0" mnemonicParsing="false" onAction="#openGraphPopup" text="Open Graphs" />
    </children>
 </AnchorPane>
