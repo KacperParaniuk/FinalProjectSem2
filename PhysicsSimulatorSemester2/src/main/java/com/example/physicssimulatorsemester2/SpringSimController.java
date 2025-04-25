@@ -5,7 +5,10 @@ import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 
 import java.awt.*;
@@ -14,7 +17,12 @@ import java.io.IOException;
 public class SpringSimController extends Drawing{
     public Canvas canvas;
     public Button startBtn, stopBtn, resetBtn, resumeBtn;
+    public Text currentDisplacementLbl, currentKValLbl, currentMassLbl, currentSpringLengthLbl;
+    public Slider lengthSlider, kValSlider, massSlider, deltaXSlider;
+
     private boolean isEducationalMode = false;
+
+
 
     private GraphicsContext gc;
 
@@ -31,8 +39,9 @@ public class SpringSimController extends Drawing{
         gc.setFill(Color.GRAY);
         gc.fillRect(0,300,canvas.getWidth(),300);
         gc.fillRect(20, 200, 50, 300);
+        resumeBtn.setVisible(false);
 
-
+        setCurrentValues();
         createBox();
         drawSpring();
 
@@ -40,18 +49,34 @@ public class SpringSimController extends Drawing{
 
 
 
+
+
+    }
+
+    public void setCurrentValues(){
+        currentDisplacementLbl.setText("Displacement: " + x + " Meters (m)");
+        currentMassLbl.setText("Mass: " + mass + " kg");
+        currentKValLbl.setText("K-Value: " + k);
+        currentSpringLengthLbl.setText("Spring Length: " + roundToOneDecimalPlace(springLength/metersToPixels) + " Meters (m)");
     }
 
     public void resetSpring(){
         massX = 400;
         massY = 300;
         endX = massX;
+        k = 2.0;
+        mass = 2.0;
+        x = 10; // displacement from rest (meters)
+        velocity = 0.0;
+        acceleration = 0.0;
+        lastTime = 0;
+        createBox();
+        drawSpring();
     }
 
     public void createBox(){
         gc.setFill(Color.BLACK);
         gc.fillRect(massX, massY-widthOfBox, widthOfBox, widthOfBox);
-
     }
 
 
@@ -104,15 +129,13 @@ public class SpringSimController extends Drawing{
 
 
     public void actionStartSim(ActionEvent actionEvent) {
+
+
+
         timer = new AnimationTimer(){
             @Override
             public void handle(long now){
-
                 update(now);
-
-
-
-
             }
 
 
@@ -164,17 +187,15 @@ public class SpringSimController extends Drawing{
         createBox();
         drawSpring();
 
-
-
-
     }
 
 
     private boolean stopped;
 
-    public void actionStopSim(ActionEvent actionEvent) {
+    public void actionStopSim() {
         if(timer != null){
             stopped = true;
+            lastTime = 0;
             timer.stop();
         }
         stopBtn.setDisable(true);
@@ -192,9 +213,11 @@ public class SpringSimController extends Drawing{
         startBtn.setDisable(false);
         stopBtn.setDisable(false);
         resumeBtn.setVisible(false);
-
-
-
+        lengthSlider.setValue(0);
+        kValSlider.setValue(0);
+        deltaXSlider.setValue(0);
+        massSlider.setValue(0);
+        setCurrentValues();
 
     }
 
@@ -209,4 +232,51 @@ public class SpringSimController extends Drawing{
     }
 
 
+    // changing sliders
+
+    public void actionSpringLength(MouseEvent mouseEvent) {
+        actionStopSim();
+        stopBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+
+
+        setCurrentValues();
+
+
+    }
+
+    public void actionMass(MouseEvent mouseEvent) {
+        actionStopSim();
+        stopBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+
+
+
+        setCurrentValues();
+
+    }
+
+    public void actionKVal(MouseEvent mouseEvent) {
+        actionStopSim();
+        stopBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+
+
+
+        setCurrentValues();
+
+
+    }
+
+    public void actionDeltaX(MouseEvent mouseEvent) {
+        actionStopSim();
+        stopBtn.setDisable(false);
+        resumeBtn.setVisible(false);
+
+
+
+
+        setCurrentValues();
+
+    }
 }
