@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -19,6 +20,8 @@ public class SpringSimController extends Drawing{
     public Button startBtn, stopBtn, resetBtn, resumeBtn;
     public Text currentDisplacementLbl, currentKValLbl, currentMassLbl, currentSpringLengthLbl;
     public Slider lengthSlider, kValSlider, massSlider, deltaXSlider;
+    public CheckBox dampingCheckBox;
+    public CheckBox allVectorsCheckBox, springForceCheckBox, dragForceCheckBox, gravityForceCheckBox;
 
     private boolean isEducationalMode = false;
 
@@ -26,6 +29,7 @@ public class SpringSimController extends Drawing{
 
     private GraphicsContext gc;
 
+    private double g = 9.81;
 
     private double massX = 400;
     private double massY = 300;
@@ -40,6 +44,7 @@ public class SpringSimController extends Drawing{
         gc.fillRect(0,300,canvas.getWidth(),300);
         gc.fillRect(20, 200, 50, 300);
         resumeBtn.setVisible(false);
+        stopBtn.setDisable(true);
 
         setCurrentValues();
         createBox();
@@ -54,9 +59,9 @@ public class SpringSimController extends Drawing{
     }
 
     public void setCurrentValues(){
-        currentDisplacementLbl.setText("Displacement: " + x + " Meters (m)");
-        currentMassLbl.setText("Mass: " + mass + " kg");
-        currentKValLbl.setText("K-Value: " + k);
+        currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(x) + " Meters (m)");
+        currentMassLbl.setText("Mass: " + roundToOneDecimalPlace(mass) + " kg");
+        currentKValLbl.setText("K-Value: " + roundToOneDecimalPlace(k));
         currentSpringLengthLbl.setText("Spring Length: " + roundToOneDecimalPlace(springLength/metersToPixels) + " Meters (m)");
     }
 
@@ -70,6 +75,8 @@ public class SpringSimController extends Drawing{
         velocity = 0.0;
         acceleration = 0.0;
         lastTime = 0;
+        widthOfBox = 100;
+        numZigs = 12;
         createBox();
         drawSpring();
     }
@@ -78,6 +85,11 @@ public class SpringSimController extends Drawing{
         gc.setFill(Color.BLACK);
         gc.fillRect(massX, massY-widthOfBox, widthOfBox, widthOfBox);
     }
+    public void createBox(double massX){
+        gc.setFill(Color.BLACK);
+        gc.fillRect(massX, massY-widthOfBox, widthOfBox, widthOfBox);
+    }
+
 
 
 
@@ -119,6 +131,34 @@ public class SpringSimController extends Drawing{
 
     }
 
+    public void drawSpring(double drawToEndX, double drawToEndY){
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(2);
+
+        double dx = (drawToEndX-startX) / numZigs;
+        double dy = (drawToEndY-startY) / numZigs;
+
+        double length = Math.sqrt(dx*dx + dy*dy);
+        double perpX = -dy / length; // can be used for vertical springs
+        double perpY = dx / length;
+
+        double zigDir = 1;
+
+        gc.beginPath();
+        gc.moveTo(startX, startY);
+
+        for (int i = 1; i < numZigs; i++) {
+            double x = startX + i * dx;
+            double y = startY + i * dy + zigDir * springWidth *perpY;
+            gc.lineTo(x, y);
+            zigDir *= -1; // alternate left/right
+        }
+
+        gc.lineTo(drawToEndX, drawToEndY);
+        gc.stroke();
+
+    }
+
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
     }
@@ -129,13 +169,15 @@ public class SpringSimController extends Drawing{
 
 
     public void actionStartSim(ActionEvent actionEvent) {
-
+        startBtn.setDisable(true);
+        stopBtn.setDisable(false);
 
 
         timer = new AnimationTimer(){
             @Override
             public void handle(long now){
                 update(now);
+                drawForces();
             }
 
 
@@ -179,9 +221,14 @@ public class SpringSimController extends Drawing{
 
         acceleration = (-k / mass) * x;
         velocity += acceleration *dt;
+        if(dampingCheckBox.isSelected()){
+            velocity *= .99;
+        }
         x += velocity * dt *metersToPixels;
 
-        massX = x + massX;
+        System.out.println(x);
+
+        massX = (x + massX);
         endX = massX;
 
         createBox();
@@ -211,7 +258,7 @@ public class SpringSimController extends Drawing{
             timer.stop();
         }
         startBtn.setDisable(false);
-        stopBtn.setDisable(false);
+        stopBtn.setDisable(true);
         resumeBtn.setVisible(false);
         lengthSlider.setValue(0);
         kValSlider.setValue(0);
@@ -239,6 +286,16 @@ public class SpringSimController extends Drawing{
         stopBtn.setDisable(false);
         resumeBtn.setVisible(false);
 
+        double stretchTo = (lengthSlider.getValue() + 50) * 5;
+        endX = stretchTo;
+        massX = endX;
+
+        clearCanvas();
+        drawSpring();
+        createBox();
+
+
+        springLength = stretchTo - startX;
 
         setCurrentValues();
 
@@ -250,6 +307,12 @@ public class SpringSimController extends Drawing{
         stopBtn.setDisable(false);
         resumeBtn.setVisible(false);
 
+        mass = massSlider.getValue() / 10;
+        widthOfBox = mass * 50;
+
+        clearCanvas();
+        drawSpring();
+        createBox();
 
 
         setCurrentValues();
@@ -261,7 +324,13 @@ public class SpringSimController extends Drawing{
         stopBtn.setDisable(false);
         resumeBtn.setVisible(false);
 
+        k = kValSlider.getValue()/10;
 
+
+        numZigs = (int) (Math.random()* (k)) + 12;
+        clearCanvas();
+        drawSpring();
+        createBox();
 
         setCurrentValues();
 
@@ -274,9 +343,31 @@ public class SpringSimController extends Drawing{
         resumeBtn.setVisible(false);
 
 
+        x= deltaXSlider.getValue()/5;
+
+        clearCanvas();
+        drawSpring(endX + x , endY);
+        createBox(endX + x );
 
 
         setCurrentValues();
+
+    }
+
+    public void drawForces(){
+
+        if(dragForceCheckBox.isSelected() && dampingCheckBox.isSelected()){
+            // draw force
+        }
+        if(gravityForceCheckBox.isSelected()){
+            double gravityForce = mass * g * 5;
+            drawVector(gc, massX+widthOfBox/2, massY-widthOfBox/2, massX+widthOfBox/2,
+                    massY-widthOfBox/2+gravityForce,Color.RED, "F_Gravity",5,0);
+        }
+
+
+
+
 
     }
 }

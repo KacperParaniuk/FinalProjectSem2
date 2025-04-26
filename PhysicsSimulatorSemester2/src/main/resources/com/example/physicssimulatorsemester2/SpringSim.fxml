@@ -55,9 +55,9 @@
             <Font name="System Bold" size="30.0" />
          </font>
       </Text>
-      <CheckBox layoutX="1197.0" layoutY="69.0" mnemonicParsing="false" text="All Vectors" />
-      <CheckBox layoutX="1197.0" layoutY="93.0" mnemonicParsing="false" text="CheckBox" />
-      <CheckBox layoutX="1197.0" layoutY="122.0" mnemonicParsing="false" text="CheckBox" />
+      <CheckBox fx:id="allVectorsCheckBox" layoutX="1197.0" layoutY="69.0" mnemonicParsing="false" text="All Vectors" />
+      <CheckBox fx:id="springForceCheckBox" layoutX="1197.0" layoutY="93.0" mnemonicParsing="false" text="Spring Force" />
+      <CheckBox fx:id="dragForceCheckBox" layoutX="1197.0" layoutY="147.0" mnemonicParsing="false" text="Drag Force" />
       <Text fx:id="currentDisplacementLbl" layoutX="916.0" layoutY="92.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Displacement: " wrappingWidth="207.333984375">
          <font>
             <Font size="14.0" />
@@ -78,5 +78,7 @@
             <Font size="14.0" />
          </font>
       </Text>
+      <CheckBox fx:id="dampingCheckBox" layoutX="658.0" layoutY="409.0" mnemonicParsing="false" text="Realistic Spring / Damping" />
+      <CheckBox fx:id="gravityForceCheckBox" layoutX="1197.0" layoutY="120.0" mnemonicParsing="false" text="Gravity Force" />
    </children>
 </AnchorPane>

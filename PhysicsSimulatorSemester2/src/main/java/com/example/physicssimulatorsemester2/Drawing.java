@@ -1,6 +1,8 @@
 package com.example.physicssimulatorsemester2;
 
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
 import java.io.IOException;
 
@@ -12,6 +14,24 @@ public class Drawing {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void drawVector(GraphicsContext gc, double startX, double startY, double endX, double endY, Color color, String forceName, int offsetX, int offsetY){
+        gc.setStroke(color);
+        gc.setLineWidth(2);
+        gc.strokeLine(startX,startY,endX,endY);
+
+        drawArrowhead(gc, startX,startY,endX,endY);
+
+        gc.setFill(color);
+        gc.setFont(new Font("Arial", 12));
+        gc.fillText(forceName, endX+offsetX, endY+offsetY);
+
+
+
+
+
+
     }
 
     public void drawArrowhead(GraphicsContext gc, double x1, double y1, double x2, double y2) {
