@@ -9,10 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -29,6 +28,7 @@ public class PendulumSimController extends Drawing {
     public Text angleLbl, lengthLbl, massLbl;
     public ToggleButton idealPendBtn, realisticBtn;
     public CheckBox gravityCheckBox, gComponentCheckBox, restoringCheckBox, pathCheckBox, showAllCheckBox;
+    public ToggleButton openGraphBtn;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
@@ -105,10 +105,6 @@ public class PendulumSimController extends Drawing {
     public void drawBall(double x, double y){
         gc.setFill(Color.DARKBLUE);
         gc.fillOval(x-bobRadius,y-bobRadius,bobRadius*2,bobRadius*2);
-    }
-    public void setEducationalMode(boolean val){
-        isEducationalMode = val;
-
     }
 
     private double updateGraphTimeInterval = 0;
@@ -417,6 +413,91 @@ public class PendulumSimController extends Drawing {
         // OPTIONAL: store reference to controller to update the graphs
         this.graphController = controller;
     }
+
+    public Label tooltipLabel;
+    public ImageView tooltipImage;
+    public Button nextStepBtn;
+
+    private int stepIndex = 0;
+
+    public void handleNextStep(){
+        if(stepIndex<10){
+            stepIndex++;
+            updateLectureStep();
+        }
+    }
+
+    public void updateLectureStep(){
+
+        System.out.println(stepIndex + ": Lecture Step");
+
+        switch(stepIndex){
+            case 1:
+                break;
+            case 2:
+
+        }
+
+
+
+
+
+    }
+
+    public void setEducationalMode(boolean val) {
+        isEducationalMode = val;
+        if (isEducationalMode) {
+            resumeBtn.setVisible(false);
+            gComponentCheckBox.setVisible(false);
+            gravityCheckBox.setVisible(false);
+            pathCheckBox.setVisible(false);
+            restoringCheckBox.setVisible(false);
+            showAllCheckBox.setVisible(false);
+            angleSlider.setVisible(false);
+            lengthSlider.setVisible(false);
+            massSlider.setVisible(false);
+            stopBtn.setVisible(false);
+            startBtn.setVisible(false);
+            resetBtn.setVisible(false);
+            massSlider.setVisible(false);
+            angleLbl.setVisible(false);
+            lengthLbl.setVisible(false);
+            massLbl.setVisible(false);
+            idealPendBtn.setVisible(false);
+            realisticBtn.setVisible(false);
+            openGraphBtn.setVisible(false);
+
+            tooltipLabel.setVisible(true);
+            tooltipLabel.setText("Step 1: Welcome to the Pendulum Simulation! \n"
+                    + "You will click next step each time you complete the task / read what I say! \n"
+                    + "Today we are learning the basics of pendulums!" + " Click \"next step\" once your done! \n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n"
+            );
+            tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/pendulumSimulation.png")));
+        } else {
+            tooltipLabel.setVisible(false);
+            nextStepBtn.setVisible(false);
+            tooltipImage.setVisible(false);
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 
 
 }

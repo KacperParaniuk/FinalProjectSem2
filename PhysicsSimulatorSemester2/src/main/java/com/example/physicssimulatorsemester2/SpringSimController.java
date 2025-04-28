@@ -2,11 +2,15 @@ package com.example.physicssimulatorsemester2;
 
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -19,11 +23,13 @@ import java.io.IOException;
 public class SpringSimController extends Drawing{
     public Canvas canvas;
     public Button startBtn, stopBtn, resetBtn, resumeBtn;
-    public Text currentDisplacementLbl, currentKValLbl, currentMassLbl, currentSpringLengthLbl;
-    public Slider lengthSlider, kValSlider, massSlider, deltaXSlider;
+    public Text currentDisplacementLbl, currentKValLbl, currentMassLbl;
+    public Slider kValSlider, massSlider, deltaXSlider;
     public CheckBox dampingCheckBox;
     public CheckBox allVectorsCheckBox, springForceCheckBox, dragForceCheckBox, gravityForceCheckBox;
     public CheckBox equilCheckBox;
+    public Text lbl4;
+    public Label lbl1, lbl2, lbl3;
 
     private boolean isEducationalMode = false;
 
@@ -65,7 +71,6 @@ public class SpringSimController extends Drawing{
         currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(x/metersToPixels) + " Meters (m)");
         currentMassLbl.setText("Mass: " + roundToOneDecimalPlace(mass) + " kg");
         currentKValLbl.setText("K-Value: " + roundToOneDecimalPlace(k));
-        currentSpringLengthLbl.setText("Spring Length: " + roundToOneDecimalPlace(springLength/metersToPixels) + " Meters (m)");
     }
 
     public void resetSpring(){
@@ -137,12 +142,6 @@ public class SpringSimController extends Drawing{
 
     }
 
-    public void setEducationalMode(boolean val){
-        isEducationalMode = val;
-    }
-
-
-
 
 
 
@@ -206,8 +205,6 @@ public class SpringSimController extends Drawing{
             velocity *= .99;
         }
         x += velocity * dt * metersToPixels;
-
-        System.out.println(x);
 
         massX = equilibriumX + x;
         endX = massX;
@@ -388,9 +385,90 @@ public class SpringSimController extends Drawing{
                 dashedLineEndY-=30;
             }
 
+        }
+    }
+
+    public Label tooltipLabel;
+    public ImageView tooltipImage;
+    public Button nextStepBtn;
+
+    private int stepIndex = 0;
+
+    public void handleNextStep(){
+        if(stepIndex<10){
+            stepIndex++;
+            updateLectureStep();
+        }
+    }
+
+    public void updateLectureStep(){
+
+        System.out.println(stepIndex + ": Lecture Step");
 
 
+        switch(stepIndex){
+            case 1:
+                break;
+            case 2:
+
+
+        }
+
+
+
+
+
+
+    }
+
+    public void setEducationalMode(boolean val){
+        isEducationalMode = val;
+        if(isEducationalMode){
+            resumeBtn.setVisible(false);
+            allVectorsCheckBox.setVisible(false);
+            dampingCheckBox.setVisible(false);
+            dragForceCheckBox.setVisible(false);
+            gravityForceCheckBox.setVisible(false);
+            equilCheckBox.setVisible(false);
+            springForceCheckBox.setVisible(false);
+            kValSlider.setVisible(false);
+            stopBtn.setVisible(false);
+            startBtn.setVisible(false);
+            resetBtn.setVisible(false);
+            massSlider.setVisible(false);
+            deltaXSlider.setVisible(false);
+            lbl1.setVisible(false);
+            lbl2.setVisible(false);
+            lbl3.setVisible(false);
+            lbl4.setVisible(false);
+            currentMassLbl.setVisible(false);
+            currentDisplacementLbl.setVisible(false);
+            currentKValLbl.setVisible(false);
+
+
+
+            tooltipLabel.setVisible(true);
+            tooltipLabel.setText("Step 1: Welcome to the Spring Simulation! \n"
+                    + "You will click next step each time you complete the task / read what I say! \n"
+                    + "Today we are learning the basics of simple harmonic motion and springs!" + " Click \"next step\" once your done! \n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n" +
+                    "\n"
+            );
+            tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/springSimulation.png")));
+        }
+        else{
+            tooltipLabel.setVisible(false);
+            nextStepBtn.setVisible(false);
+            tooltipImage.setVisible(false);
 
         }
     }
 }
+
+

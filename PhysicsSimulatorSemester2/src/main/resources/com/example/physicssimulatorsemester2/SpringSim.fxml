@@ -5,11 +5,12 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="639.0" prefWidth="1334.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.SpringSimController">
+<AnchorPane prefHeight="639.0" prefWidth="1334.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.SpringSimController">
    <children>
       <Button layoutX="458.0" layoutY="551.0" mnemonicParsing="false" onAction="#actionMainMenu" text="Main Menu" />
       <Canvas fx:id="canvas" height="392.0" layoutX="76.0" layoutY="15.0" width="840.0" />
@@ -19,31 +20,16 @@
       <Button fx:id="resumeBtn" layoutX="526.0" layoutY="444.0" mnemonicParsing="false" onAction="#handleResume" text="Resume" />
       <Slider fx:id="deltaXSlider" layoutX="103.0" layoutY="418.0" min="-100.0" onMouseReleased="#actionDeltaX" />
       <Slider fx:id="kValSlider" layoutX="103.0" layoutY="481.0" onMouseReleased="#actionKVal" />
-      <Label layoutX="29.0" layoutY="394.0" prefHeight="62.0" prefWidth="77.0" text="Displacement from Equilibrium" textOverrun="CLIP" wrapText="true" />
-      <Label layoutX="29.0" layoutY="458.0" prefHeight="74.0" prefWidth="78.0" text="K-value (How hard it is to stretch the spring)" textOverrun="CLIP" wrapText="true" />
+      <Label fx:id="lbl1" layoutX="29.0" layoutY="394.0" prefHeight="62.0" prefWidth="77.0" text="Displacement from Equilibrium" textOverrun="CLIP" wrapText="true" />
+      <Label fx:id="lbl2" layoutX="29.0" layoutY="458.0" prefHeight="74.0" prefWidth="78.0" text="K-value (How hard it is to stretch the spring)" textOverrun="CLIP" wrapText="true" />
       <Slider fx:id="massSlider" layoutX="103.0" layoutY="532.0" onMouseReleased="#actionMass" />
-      <Label layoutX="68.0" layoutY="508.0" prefHeight="62.0" prefWidth="34.0" text="Mass:" textOverrun="CLIP" wrapText="true" />
-      <Text fx:id="deltaXLbl" layoutX="247.0" layoutY="433.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delta x:" wrappingWidth="215.67340087890625">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Text>
-      <Text fx:id="KValLbl" layoutX="247.0" layoutY="496.0" strokeType="OUTSIDE" strokeWidth="0.0" text="K: " wrappingWidth="215.67340087890625">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Text>
-      <Text fx:id="massLbl" layoutX="247.0" layoutY="546.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mass:" wrappingWidth="215.67340087890625">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Text>
+      <Label fx:id="lbl3" layoutX="68.0" layoutY="508.0" prefHeight="62.0" prefWidth="34.0" text="Mass:" textOverrun="CLIP" wrapText="true" />
       <Text layoutX="916.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Values">
          <font>
             <Font name="System Bold" size="30.0" />
          </font>
       </Text>
-      <Text layoutX="1197.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vectors">
+      <Text fx:id="lbl4" layoutX="1197.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Vectors">
          <font>
             <Font name="System Bold" size="30.0" />
          </font>
@@ -66,13 +52,11 @@
             <Font size="14.0" />
          </font>
       </Text>
-      <Text fx:id="currentSpringLengthLbl" layoutX="916.0" layoutY="156.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spring Length: " wrappingWidth="207.333984375">
-         <font>
-            <Font size="14.0" />
-         </font>
-      </Text>
       <CheckBox fx:id="dampingCheckBox" layoutX="658.0" layoutY="409.0" mnemonicParsing="false" text="Realistic Spring / Damping" />
       <CheckBox fx:id="gravityForceCheckBox" layoutX="1197.0" layoutY="120.0" mnemonicParsing="false" text="Gravity Force" />
       <CheckBox fx:id="equilCheckBox" layoutX="658.0" layoutY="430.0" mnemonicParsing="false" onAction="#drawEquilibrium" text="Show Equilibrium Position" />
+      <Label fx:id="tooltipLabel" layoutX="535.0" layoutY="156.0" prefWidth="400.0" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" text="Label" visible="false" wrapText="true" />
+      <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="599.0" layoutY="328.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="nextStepBtn" layoutX="550.0" layoutY="400.0" mnemonicParsing="false" onAction="#handleNextStep" text="Next" />
    </children>
 </AnchorPane>
