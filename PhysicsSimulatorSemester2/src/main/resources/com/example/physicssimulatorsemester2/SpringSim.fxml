@@ -38,13 +38,6 @@
             <Font size="20.0" />
          </font>
       </Text>
-      <Label layoutX="24.0" layoutY="539.0" prefHeight="62.0" prefWidth="77.0" text="Spring Length:" textOverrun="CLIP" wrapText="true" />
-      <Slider fx:id="lengthSlider" layoutX="103.0" layoutY="563.0" onMouseReleased="#actionSpringLength" />
-      <Text fx:id="lengthLbl" layoutX="247.0" layoutY="577.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Spring Length:" wrappingWidth="215.67340087890625">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Text>
       <Text layoutX="916.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Current Values">
          <font>
             <Font name="System Bold" size="30.0" />
@@ -80,5 +73,6 @@
       </Text>
       <CheckBox fx:id="dampingCheckBox" layoutX="658.0" layoutY="409.0" mnemonicParsing="false" text="Realistic Spring / Damping" />
       <CheckBox fx:id="gravityForceCheckBox" layoutX="1197.0" layoutY="120.0" mnemonicParsing="false" text="Gravity Force" />
+      <CheckBox fx:id="equilCheckBox" layoutX="658.0" layoutY="430.0" mnemonicParsing="false" onAction="#drawEquilibrium" text="Show Equilibrium Position" />
    </children>
 </AnchorPane>

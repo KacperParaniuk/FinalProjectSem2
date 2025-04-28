@@ -9,6 +9,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 
@@ -22,6 +23,7 @@ public class SpringSimController extends Drawing{
     public Slider lengthSlider, kValSlider, massSlider, deltaXSlider;
     public CheckBox dampingCheckBox;
     public CheckBox allVectorsCheckBox, springForceCheckBox, dragForceCheckBox, gravityForceCheckBox;
+    public CheckBox equilCheckBox;
 
     private boolean isEducationalMode = false;
 
@@ -49,6 +51,7 @@ public class SpringSimController extends Drawing{
         setCurrentValues();
         createBox();
         drawSpring();
+        drawEquilibrium();
 
 
 
@@ -59,7 +62,7 @@ public class SpringSimController extends Drawing{
     }
 
     public void setCurrentValues(){
-        currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(x) + " Meters (m)");
+        currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(x/metersToPixels) + " Meters (m)");
         currentMassLbl.setText("Mass: " + roundToOneDecimalPlace(mass) + " kg");
         currentKValLbl.setText("K-Value: " + roundToOneDecimalPlace(k));
         currentSpringLengthLbl.setText("Spring Length: " + roundToOneDecimalPlace(springLength/metersToPixels) + " Meters (m)");
@@ -71,7 +74,7 @@ public class SpringSimController extends Drawing{
         endX = massX;
         k = 2.0;
         mass = 2.0;
-        x = 10; // displacement from rest (meters)
+        x = .25 * metersToPixels; // displacement from rest (pixels)
         velocity = 0.0;
         acceleration = 0.0;
         lastTime = 0;
@@ -84,6 +87,9 @@ public class SpringSimController extends Drawing{
     public void createBox(){
         gc.setFill(Color.BLACK);
         gc.fillRect(massX, massY-widthOfBox, widthOfBox, widthOfBox);
+        if(equilCheckBox.isSelected()){
+            drawEquilibrium();
+        }
     }
     public void createBox(double massX){
         gc.setFill(Color.BLACK);
@@ -131,34 +137,6 @@ public class SpringSimController extends Drawing{
 
     }
 
-    public void drawSpring(double drawToEndX, double drawToEndY){
-        gc.setStroke(Color.GRAY);
-        gc.setLineWidth(2);
-
-        double dx = (drawToEndX-startX) / numZigs;
-        double dy = (drawToEndY-startY) / numZigs;
-
-        double length = Math.sqrt(dx*dx + dy*dy);
-        double perpX = -dy / length; // can be used for vertical springs
-        double perpY = dx / length;
-
-        double zigDir = 1;
-
-        gc.beginPath();
-        gc.moveTo(startX, startY);
-
-        for (int i = 1; i < numZigs; i++) {
-            double x = startX + i * dx;
-            double y = startY + i * dy + zigDir * springWidth *perpY;
-            gc.lineTo(x, y);
-            zigDir *= -1; // alternate left/right
-        }
-
-        gc.lineTo(drawToEndX, drawToEndY);
-        gc.stroke();
-
-    }
-
     public void setEducationalMode(boolean val){
         isEducationalMode = val;
     }
@@ -178,6 +156,7 @@ public class SpringSimController extends Drawing{
             public void handle(long now){
                 update(now);
                 drawForces();
+                drawEquilibrium();
             }
 
 
@@ -193,12 +172,12 @@ public class SpringSimController extends Drawing{
         gc.fillRect(0,300,canvas.getWidth(),300);
         gc.fillRect(20, 200, 50, 300);
 
+
     }
 
     // all variables that can be changed by the user
     private double k = 2.0;
     private double mass = 2.0;
-    private double x = 10; // displacement from rest (meters)
     private double velocity = 0.0;
     private double acceleration = 0.0;
     private double equilibriumX = endX;
@@ -207,6 +186,8 @@ public class SpringSimController extends Drawing{
     private double lastTime = 0;
 
     private int metersToPixels = 60;
+    private double x = .25 * metersToPixels; // displacement from rest (pixels)
+
 
 
     public void update(double now){
@@ -224,11 +205,11 @@ public class SpringSimController extends Drawing{
         if(dampingCheckBox.isSelected()){
             velocity *= .99;
         }
-        x += velocity * dt *metersToPixels;
+        x += velocity * dt * metersToPixels;
 
         System.out.println(x);
 
-        massX = (x + massX);
+        massX = equilibriumX + x;
         endX = massX;
 
         createBox();
@@ -260,7 +241,6 @@ public class SpringSimController extends Drawing{
         startBtn.setDisable(false);
         stopBtn.setDisable(true);
         resumeBtn.setVisible(false);
-        lengthSlider.setValue(0);
         kValSlider.setValue(0);
         deltaXSlider.setValue(0);
         massSlider.setValue(0);
@@ -281,26 +261,26 @@ public class SpringSimController extends Drawing{
 
     // changing sliders
 
-    public void actionSpringLength(MouseEvent mouseEvent) {
-        actionStopSim();
-        stopBtn.setDisable(false);
-        resumeBtn.setVisible(false);
-
-        double stretchTo = (lengthSlider.getValue() + 50) * 5;
-        endX = stretchTo;
-        massX = endX;
-
-        clearCanvas();
-        drawSpring();
-        createBox();
-
-
-        springLength = stretchTo - startX;
-
-        setCurrentValues();
-
-
-    }
+//    public void actionSpringLength(MouseEvent mouseEvent) {
+//        actionStopSim();
+//        stopBtn.setDisable(false);
+//        resumeBtn.setVisible(false);
+//
+//        double stretchTo = (lengthSlider.getValue() + 50) * 5;
+//        endX = stretchTo;
+//        massX = endX;
+//
+//        clearCanvas();
+//        drawSpring();
+//        createBox();
+//
+//
+//        springLength = stretchTo - startX;
+//
+//        setCurrentValues();
+//
+//
+//    }
 
     public void actionMass(MouseEvent mouseEvent) {
         actionStopSim();
@@ -343,31 +323,74 @@ public class SpringSimController extends Drawing{
         resumeBtn.setVisible(false);
 
 
-        x= deltaXSlider.getValue()/5;
+        x= deltaXSlider.getValue()/30;
+        x = x*metersToPixels;
+        endX = equilibriumX+x;
+        massX= endX;
 
         clearCanvas();
-        drawSpring(endX + x , endY);
-        createBox(endX + x );
-
+        drawSpring();
+        createBox();
 
         setCurrentValues();
+
+
+
 
     }
 
     public void drawForces(){
 
-        if(dragForceCheckBox.isSelected() && dampingCheckBox.isSelected()){
-            // draw force
+        if(dragForceCheckBox.isSelected() && dampingCheckBox.isSelected() || (allVectorsCheckBox.isSelected() && dampingCheckBox.isSelected())){
+            double forceFriction = .05 * mass * g * metersToPixels;
+            if(velocity<0){
+                drawVector(gc, endX+widthOfBox/2, massY-widthOfBox/2, endX+widthOfBox/2+forceFriction, massY-widthOfBox/2, Color.BROWN, "F_Friction", 5,0);
+
+            }
+            else{
+                drawVector(gc, endX+widthOfBox/2, massY-widthOfBox/2, endX+widthOfBox/2-forceFriction, massY-widthOfBox/2, Color.BROWN, "F_Friction", -5,0);
+
+            }
+
+
         }
-        if(gravityForceCheckBox.isSelected()){
+        if(gravityForceCheckBox.isSelected() || allVectorsCheckBox.isSelected()){
             double gravityForce = mass * g * 5;
             drawVector(gc, massX+widthOfBox/2, massY-widthOfBox/2, massX+widthOfBox/2,
                     massY-widthOfBox/2+gravityForce,Color.RED, "F_Gravity",5,0);
         }
 
+        if(springForceCheckBox.isSelected() || allVectorsCheckBox.isSelected()){
+            double forceSpring = -k * x;
+            drawVector(gc, endX+widthOfBox/2, massY-widthOfBox/2, endX+widthOfBox/2+forceSpring, massY-widthOfBox/2, Color.GREEN, "F_Spring", 5,0);
+
+
+
+        }
+
+
+    }
+
+    public void drawEquilibrium(){
+        if(equilCheckBox.isSelected()){
+            double dashedLineX = equilibriumX + widthOfBox/2;
+            double dashedLineStartY = startY + 100;
+            double dashedLineEndY = startY + 80;
+            gc.setStroke(Color.YELLOW);
+            gc.setLineWidth(2);
+            gc.setFill(Color.YELLOW);
+            gc.setFont(new Font("Arial", 12));
+            gc.fillText("Equilibrium: X=0 ", dashedLineX+10,dashedLineStartY );
+
+            for (int i = 0; i < 6; i++) {
+                gc.strokeLine(dashedLineX,dashedLineStartY,dashedLineX,dashedLineEndY);
+                dashedLineStartY-=30;
+                dashedLineEndY-=30;
+            }
 
 
 
 
+        }
     }
 }

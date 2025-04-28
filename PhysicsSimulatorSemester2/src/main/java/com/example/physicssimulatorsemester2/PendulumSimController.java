@@ -92,7 +92,6 @@ public class PendulumSimController extends Drawing {
         gc.clearRect(0,0,canvas.getWidth(), canvas.getHeight()); // clearing canvas
         gc.setFill(Color.GREY);
         gc.fillRect(0, 0, canvas.getWidth(),80);
-
     }
 
 
