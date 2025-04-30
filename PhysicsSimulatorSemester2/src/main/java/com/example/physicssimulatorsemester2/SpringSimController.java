@@ -30,6 +30,7 @@ public class SpringSimController extends Drawing{
     public CheckBox equilCheckBox;
     public Text lbl4;
     public Label lbl1, lbl2, lbl3;
+    public CheckBox UCMCheckBox;
 
     private boolean isEducationalMode = false;
 
@@ -187,12 +188,13 @@ public class SpringSimController extends Drawing{
     private int metersToPixels = 60;
     private double x = .25 * metersToPixels; // displacement from rest (pixels)
 
-
+    private double timeStartOfSim;
 
     public void update(double now){
         clearCanvas();
 
         if(lastTime==0){
+            timeStartOfSim = now;
             lastTime = now;
         }
 
@@ -211,6 +213,11 @@ public class SpringSimController extends Drawing{
 
         createBox();
         drawSpring();
+
+        if(UCMCheckBox.isSelected()){
+            System.out.println("Drawing");
+            drawUCM(dt);
+        }
 
     }
 
@@ -322,8 +329,10 @@ public class SpringSimController extends Drawing{
 
         x= deltaXSlider.getValue()/30;
         x = x*metersToPixels;
+        stretchFromEquilibrium =x;
         endX = equilibriumX+x;
         massX= endX;
+
 
         clearCanvas();
         drawSpring();
@@ -468,6 +477,40 @@ public class SpringSimController extends Drawing{
             tooltipImage.setVisible(false);
 
         }
+    }
+
+    private double stretchFromEquilibrium = x;
+    double elapsedTime = 0;
+
+    public void drawUCM(double dt){
+        double radius = stretchFromEquilibrium;
+        double circleCenterX = equilibriumX;
+        double circleCenterY = massY-widthOfBox/2;
+
+        double omega = Math.sqrt(k/mass); // angular frequency;
+        elapsedTime += dt;
+        double angle = omega * elapsedTime;
+
+        double ucmX = circleCenterX + radius * Math.cos(angle);
+        double ucmY = circleCenterY + radius * Math.sin(angle);
+
+
+        System.out.println("Computed ");
+
+        gc.setStroke(Color.RED);
+        gc.strokeOval(circleCenterX-radius, circleCenterY - radius, radius * 2, radius * 2);
+
+        gc.setFill(Color.ORANGE);
+        gc.fillOval(ucmX - 5, ucmY - 5, 10, 10);
+
+        gc.setFill(Color.BLACK);
+        gc.fillText("Uniform Circular Motion (UCM)", circleCenterX - 50, circleCenterY - radius - 10);
+
+
+    }
+
+    public void actionDrawUCM(ActionEvent actionEvent) {
+
     }
 }
 
