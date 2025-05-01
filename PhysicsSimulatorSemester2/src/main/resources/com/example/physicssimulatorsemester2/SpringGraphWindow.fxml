@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.LineChart?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.example.physicssimulatorsemester2.GraphWindowControllerSpring"
+            prefHeight="400.0" prefWidth="600.0">
+    <VBox spacing="10" AnchorPane.topAnchor="10" AnchorPane.bottomAnchor="10"
+          AnchorPane.leftAnchor="10" AnchorPane.rightAnchor="10">
+
+        <LineChart fx:id="positionChart" title="Position vs Time">
+            <xAxis><NumberAxis label="Time (s)" /></xAxis>
+            <yAxis><NumberAxis label="Position (x)" /></yAxis>
+        </LineChart>
+
+    </VBox>
+</AnchorPane>

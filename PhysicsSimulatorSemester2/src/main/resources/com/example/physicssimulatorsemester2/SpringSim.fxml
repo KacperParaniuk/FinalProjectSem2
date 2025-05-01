@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="639.0" prefWidth="1334.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.SpringSimController">
+<AnchorPane prefHeight="639.0" prefWidth="1334.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.SpringSimController">
    <children>
       <Button layoutX="458.0" layoutY="551.0" mnemonicParsing="false" onAction="#actionMainMenu" text="Main Menu" />
       <Canvas fx:id="canvas" height="392.0" layoutX="76.0" layoutY="15.0" width="840.0" />
@@ -58,6 +58,7 @@
       <Label fx:id="tooltipLabel" layoutX="535.0" layoutY="156.0" prefWidth="400.0" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" text="Label" visible="false" wrapText="true" />
       <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="599.0" layoutY="328.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="nextStepBtn" layoutX="550.0" layoutY="400.0" mnemonicParsing="false" onAction="#handleNextStep" text="Next" />
-      <CheckBox fx:id="UCMCheckBox" layoutX="658.0" layoutY="450.0" mnemonicParsing="false" onAction="#actionDrawUCM" text="Project UCM Projection" />
+      <CheckBox fx:id="UCMCheckBox" layoutX="658.0" layoutY="450.0" mnemonicParsing="false" text="Project UCM Projection" />
+      <Button fx:id="openGraphBtn" layoutX="843.0" layoutY="412.0" mnemonicParsing="false" onAction="#openGraphPopup" text="Open Oscillation Motion Graph" />
    </children>
 </AnchorPane>

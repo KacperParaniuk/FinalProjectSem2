@@ -3,8 +3,12 @@ package com.example.physicssimulatorsemester2;
 import javafx.animation.AnimationTimer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -15,9 +19,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
-
-import java.awt.*;
 import java.io.IOException;
 
 public class SpringSimController extends Drawing{
@@ -31,6 +34,7 @@ public class SpringSimController extends Drawing{
     public Text lbl4;
     public Label lbl1, lbl2, lbl3;
     public CheckBox UCMCheckBox;
+    public Button openGraphBtn;
 
     private boolean isEducationalMode = false;
 
@@ -69,7 +73,7 @@ public class SpringSimController extends Drawing{
     }
 
     public void setCurrentValues(){
-        currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(x/metersToPixels) + " Meters (m)");
+        currentDisplacementLbl.setText("Displacement: " + roundToOneDecimalPlace(xPixels /metersToPixels) + " Meters (m)");
         currentMassLbl.setText("Mass: " + roundToOneDecimalPlace(mass) + " kg");
         currentKValLbl.setText("K-Value: " + roundToOneDecimalPlace(k));
     }
@@ -80,7 +84,7 @@ public class SpringSimController extends Drawing{
         endX = massX;
         k = 2.0;
         mass = 2.0;
-        x = .25 * metersToPixels; // displacement from rest (pixels)
+        xPixels = .25 * metersToPixels; // displacement from rest (pixels)
         velocity = 0.0;
         acceleration = 0.0;
         lastTime = 0;
@@ -101,9 +105,6 @@ public class SpringSimController extends Drawing{
         gc.setFill(Color.BLACK);
         gc.fillRect(massX, massY-widthOfBox, widthOfBox, widthOfBox);
     }
-
-
-
 
     private double startX = 50;
     private double startY = 225;
@@ -144,12 +145,17 @@ public class SpringSimController extends Drawing{
     }
 
 
+    private GraphWindowControllerSpring graphController;
+    private double updateGraphTimeInterval = 0;
+    private double graphInterval = 50_000_000.0;
+
+
 
 
     public void actionStartSim(ActionEvent actionEvent) {
+        updateGraphTimeInterval = System.nanoTime();
         startBtn.setDisable(true);
         stopBtn.setDisable(false);
-
 
         timer = new AnimationTimer(){
             @Override
@@ -157,12 +163,32 @@ public class SpringSimController extends Drawing{
                 update(now);
                 drawForces();
                 drawEquilibrium();
+
+                if(graphController != null){
+                    if(now - updateGraphTimeInterval > graphInterval){
+                        updateGraphTimeInterval = now;
+                        updateGraphs();
+                    }
+                }
+
             }
-
-
 
         };
         timer.start();
+
+    }
+    private int maxPoints = 150;
+
+
+    public void updateGraphs(){
+
+        if (graphController.positionSeries.getData().size() > maxPoints) {
+            graphController.positionSeries.getData().removeFirst();
+        }
+
+        double x = xPixels/metersToPixels;
+        graphController.positionSeries.getData().add(new XYChart.Data<>(timeElapsed, x));
+
 
     }
 
@@ -186,9 +212,11 @@ public class SpringSimController extends Drawing{
     private double lastTime = 0;
 
     private int metersToPixels = 60;
-    private double x = .25 * metersToPixels; // displacement from rest (pixels)
+    private double xPixels = .25 * metersToPixels; // displacement from rest (pixels)
 
     private double timeStartOfSim;
+    private double timeElapsed = 0;
+
 
     public void update(double now){
         clearCanvas();
@@ -199,16 +227,18 @@ public class SpringSimController extends Drawing{
         }
 
         double dt = (now-lastTime) / 1e9;
+        timeElapsed +=dt;
+
         lastTime = now;
 
-        acceleration = (-k / mass) * x;
-        velocity += acceleration *dt;
+        acceleration = (-k / mass) * xPixels;
+        velocity += acceleration * dt;
         if(dampingCheckBox.isSelected()){
             velocity *= .99;
         }
-        x += velocity * dt * metersToPixels;
+        xPixels += velocity * dt * metersToPixels;
 
-        massX = equilibriumX + x;
+        massX = equilibriumX + xPixels;
         endX = massX;
 
         createBox();
@@ -216,7 +246,7 @@ public class SpringSimController extends Drawing{
 
         if(UCMCheckBox.isSelected()){
             System.out.println("Drawing");
-            drawUCM(dt);
+//            drawUCM(dt);
         }
 
     }
@@ -327,10 +357,9 @@ public class SpringSimController extends Drawing{
         resumeBtn.setVisible(false);
 
 
-        x= deltaXSlider.getValue()/30;
-        x = x*metersToPixels;
-        stretchFromEquilibrium =x;
-        endX = equilibriumX+x;
+        xPixels = deltaXSlider.getValue()/30;
+        xPixels = xPixels *metersToPixels;
+        endX = equilibriumX+ xPixels;
         massX= endX;
 
 
@@ -367,7 +396,7 @@ public class SpringSimController extends Drawing{
         }
 
         if(springForceCheckBox.isSelected() || allVectorsCheckBox.isSelected()){
-            double forceSpring = -k * x;
+            double forceSpring = -k * xPixels;
             drawVector(gc, endX+widthOfBox/2, massY-widthOfBox/2, endX+widthOfBox/2+forceSpring, massY-widthOfBox/2, Color.GREEN, "F_Spring", 5,0);
 
 
@@ -417,6 +446,25 @@ public class SpringSimController extends Drawing{
 
         switch(stepIndex){
             case 1:
+                // for this part draw a spring that is to the right AND to the left and have hoverable dots
+                tooltipLabel.setText("Let's first learn about forces acting on the box!! \n"
+                        + "Hover over the dot to see what forces are being applied \n"
+                        + "What do you notice?" + " Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+                tooltipLabel.setLayoutX(50);
+                tooltipLabel.setLayoutY(400);
+                nextStepBtn.setLayoutX(50);
+                nextStepBtn.setLayoutY(540);
+                tooltipImage.setImage(null);
                 break;
             case 2:
 
@@ -479,39 +527,49 @@ public class SpringSimController extends Drawing{
         }
     }
 
-    private double stretchFromEquilibrium = x;
-    double elapsedTime = 0;
+    @FXML
+    private void openGraphPopup() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("SpringGraphWindow.fxml"));
+        Parent root = loader.load();
 
-    public void drawUCM(double dt){
-        double radius = stretchFromEquilibrium;
-        double circleCenterX = equilibriumX;
-        double circleCenterY = massY-widthOfBox/2;
+        GraphWindowControllerSpring controller = loader.getController();
 
-        double omega = Math.sqrt(k/mass); // angular frequency;
-        elapsedTime += dt;
-        double angle = omega * elapsedTime;
+        Stage graphStage = new Stage();
+        graphStage.setTitle("Spring Graphs");
+        graphStage.setScene(new Scene(root, 800, 600));
+        graphStage.show();
 
-        double ucmX = circleCenterX + radius * Math.cos(angle);
-        double ucmY = circleCenterY + radius * Math.sin(angle);
-
-
-        System.out.println("Computed ");
-
-        gc.setStroke(Color.RED);
-        gc.strokeOval(circleCenterX-radius, circleCenterY - radius, radius * 2, radius * 2);
-
-        gc.setFill(Color.ORANGE);
-        gc.fillOval(ucmX - 5, ucmY - 5, 10, 10);
-
-        gc.setFill(Color.BLACK);
-        gc.fillText("Uniform Circular Motion (UCM)", circleCenterX - 50, circleCenterY - radius - 10);
-
-
+        // OPTIONAL: store reference to controller to update the graphs
+        graphController = controller;
     }
 
-    public void actionDrawUCM(ActionEvent actionEvent) {
+//    private double stretchFromEquilibrium = xPixels;
 
-    }
+//    public void drawUCM(double dt){
+//        double radius = stretchFromEquilibrium;
+//        double circleCenterX = equilibriumX + widthOfBox/2;
+//        double circleCenterY = massY-widthOfBox/2;
+//
+//        double omega = Math.sqrt(k/mass*metersToPixels); // angular frequency;
+//        elapsedTime += dt;
+//        double angle = omega * elapsedTime;
+//
+//        double ucmX = circleCenterX + radius * Math.cos(angle);
+//        double ucmY = circleCenterY + radius * Math.sin(angle);
+//
+//
+//        gc.setStroke(Color.RED);
+//        gc.strokeOval(circleCenterX-radius, circleCenterY - radius, radius * 2, radius * 2);
+//
+//        gc.setFill(Color.ORANGE);
+//        gc.fillOval(ucmX - 5, ucmY - 5, 10, 10);
+//
+//        gc.setFill(Color.BLACK);
+//        gc.fillText("Uniform Circular Motion (UCM)", circleCenterX - 50, circleCenterY - radius - 10);
+//
+//
+//    }
+
 }
 
 
