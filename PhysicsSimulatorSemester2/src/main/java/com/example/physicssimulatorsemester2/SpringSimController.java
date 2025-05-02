@@ -94,10 +94,47 @@ public class SpringSimController extends Drawing{
 
                 if(isHovering1){
                     drawForces(equilibriumX+250, false);
+                    tooltipLabel.setText("On the right side of the spring we see the restoring force of spring pulling toward equilibrium!! \n"
+                            + "The block is in the process of moving right so there is a friction for to the left! \n"
+                            + "And force of gravity is down as always. " + " Click \"next step\" once your done! \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
                 }
-
-                if(isHovering2){
+                else if(isHovering2){
                     drawForces(equilibriumX-150, true);
+                    tooltipLabel.setText("On the left side of the spring we see the restoring force of spring pushing toward equilibrium!! \n"
+                            + "The block is in the process of moving left so there is a friction for to the right! \n"
+                            + "And force of gravity is down as always. " + " Click \"next step\" once your done! \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
+                }
+                else{
+                    tooltipLabel.setText("Let's first learn about forces acting on the box!! \n"
+                            + "Hover over the dot to see what forces are being applied \n"
+                            + "What do you notice?" + " Click \"next step\" once your done! \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
                 }
 
                 System.out.println(isHovering1+ " 1st Block");
@@ -570,7 +607,7 @@ public class SpringSimController extends Drawing{
                 tooltipLabel.setLayoutX(50);
                 tooltipLabel.setLayoutY(400);
                 nextStepBtn.setLayoutX(50);
-                nextStepBtn.setLayoutY(540);
+                nextStepBtn.setLayoutY(580);
                 tooltipImage.setImage(null);
 
 
