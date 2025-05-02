@@ -51,6 +51,11 @@ public class SpringSimController extends Drawing{
 
     private javafx.animation.AnimationTimer timer;
 
+    private double mouseX = 0;
+    private double mouseY = 0;
+
+
+
     public void initialize(){
         gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.GRAY);
@@ -64,6 +69,44 @@ public class SpringSimController extends Drawing{
         drawSpring();
         drawEquilibrium();
 
+
+
+        canvas.setOnMouseMoved(e -> {
+            if(stepIndex==1 && isEducationalMode){
+                clearCanvas();
+                drawSpring(equilibriumX+200,massY-widthOfBox/2);
+                drawSpring(equilibriumX-200,massY-widthOfBox/2);
+                equilCheckBox.setSelected(true);
+                drawEquilibrium();
+                createBox(equilibriumX+200);
+                createBox(equilibriumX-200);
+
+                mouseX = e.getX();
+                mouseY = e.getY();
+
+                isHovering1 = mouseX >= equilibriumX+180
+                        && mouseX <= equilibriumX+300 && mouseY >= massY-widthOfBox/2-50
+                        && mouseY <= massY+widthOfBox/2+50;
+
+                isHovering2 = mouseX <= equilibriumX-100
+                        && mouseX >= equilibriumX-200 && mouseY >= massY-widthOfBox/2-50
+                        && mouseY <= massY+widthOfBox/2+50;
+
+                if(isHovering1){
+                    drawForces(equilibriumX+250, false);
+                }
+
+                if(isHovering2){
+                    drawForces(equilibriumX-150, true);
+                }
+
+                System.out.println(isHovering1+ " 1st Block");
+                System.out.println(isHovering2 + " 2nd Block");
+            }
+
+
+
+        });
 
 
 
@@ -144,6 +187,34 @@ public class SpringSimController extends Drawing{
 
     }
 
+    public void drawSpring(double drawToEndX, double drawToEndY){
+        gc.setStroke(Color.GRAY);
+        gc.setLineWidth(2);
+
+        double dx = (drawToEndX-startX) / numZigs;
+        double dy = (drawToEndY-startY) / numZigs;
+
+        double length = Math.sqrt(dx*dx + dy*dy);
+        double perpX = -dy / length; // can be used for vertical springs
+        double perpY = dx / length;
+
+        double zigDir = 1;
+
+        gc.beginPath();
+        gc.moveTo(startX, startY);
+
+        for (int i = 1; i < numZigs; i++) {
+            double x = startX + i * dx;
+            double y = startY + i * dy + zigDir * springWidth *perpY;
+            gc.lineTo(x, y);
+            zigDir *= -1; // alternate left/right
+        }
+
+        gc.lineTo(drawToEndX, drawToEndY);
+        gc.stroke();
+
+    }
+
 
     private GraphWindowControllerSpring graphController;
     private double updateGraphTimeInterval = 0;
@@ -170,6 +241,7 @@ public class SpringSimController extends Drawing{
                         updateGraphs();
                     }
                 }
+
 
             }
 
@@ -248,6 +320,7 @@ public class SpringSimController extends Drawing{
             System.out.println("Drawing");
 //            drawUCM(dt);
         }
+
 
     }
 
@@ -399,9 +472,40 @@ public class SpringSimController extends Drawing{
             double forceSpring = -k * xPixels;
             drawVector(gc, endX+widthOfBox/2, massY-widthOfBox/2, endX+widthOfBox/2+forceSpring, massY-widthOfBox/2, Color.GREEN, "F_Spring", 5,0);
 
+        }
+
+    }
+
+    public void drawForces(double startX, boolean left){
+
+        double forceFriction = .05 * mass * g * metersToPixels ;
+        if(left){
+            drawVector(gc, startX, massY-widthOfBox/2, startX+forceFriction, massY-widthOfBox/2, Color.BROWN, "F_Friction", 5,0);
+
+        }
+        else{
+            drawVector(gc, startX, massY-widthOfBox/2, startX-forceFriction, massY-widthOfBox/2, Color.BROWN, "F_Friction", -5,0);
+
+        }
+
+        double forceSpring;
+        if(left){
+            forceSpring = k * 50;
+            drawVector(gc, startX, massY-widthOfBox/2, startX+widthOfBox/2+forceSpring, massY-widthOfBox/2, Color.GREEN, "F_Spring", 5,0);
+
+        }
+        else{
+            forceSpring = -k * 50;
+            drawVector(gc, startX, massY-widthOfBox/2, startX-widthOfBox/2+forceSpring, massY-widthOfBox/2, Color.GREEN, "F_Spring", 5,0);
 
 
         }
+
+
+        double gravityForce = mass * g * 5;
+        drawVector(gc, startX, massY-widthOfBox/2, startX,
+                massY-widthOfBox/2+gravityForce,Color.RED, "F_Gravity",5,0);
+
 
 
     }
@@ -439,6 +543,9 @@ public class SpringSimController extends Drawing{
         }
     }
 
+    boolean isHovering1 = false;
+    boolean isHovering2 = false;
+
     public void updateLectureStep(){
 
         System.out.println(stepIndex + ": Lecture Step");
@@ -465,6 +572,19 @@ public class SpringSimController extends Drawing{
                 nextStepBtn.setLayoutX(50);
                 nextStepBtn.setLayoutY(540);
                 tooltipImage.setImage(null);
+
+
+
+
+
+                clearCanvas();
+                drawSpring(equilibriumX+200,massY-widthOfBox/2);
+                drawSpring(equilibriumX-200,massY-widthOfBox/2);
+                equilCheckBox.setSelected(true);
+                drawEquilibrium();
+                createBox(equilibriumX+200);
+                createBox(equilibriumX-200);
+
                 break;
             case 2:
 
@@ -501,6 +621,8 @@ public class SpringSimController extends Drawing{
             currentMassLbl.setVisible(false);
             currentDisplacementLbl.setVisible(false);
             currentKValLbl.setVisible(false);
+            openGraphBtn.setVisible(false);
+            UCMCheckBox.setVisible(false);
 
 
 

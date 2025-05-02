@@ -56,7 +56,7 @@
       <CheckBox fx:id="gravityForceCheckBox" layoutX="1197.0" layoutY="120.0" mnemonicParsing="false" text="Gravity Force" />
       <CheckBox fx:id="equilCheckBox" layoutX="658.0" layoutY="430.0" mnemonicParsing="false" onAction="#drawEquilibrium" text="Show Equilibrium Position" />
       <Label fx:id="tooltipLabel" layoutX="535.0" layoutY="156.0" prefWidth="400.0" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" text="Label" visible="false" wrapText="true" />
-      <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="599.0" layoutY="328.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="604.0" layoutY="304.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="nextStepBtn" layoutX="550.0" layoutY="400.0" mnemonicParsing="false" onAction="#handleNextStep" text="Next" />
       <CheckBox fx:id="UCMCheckBox" layoutX="658.0" layoutY="450.0" mnemonicParsing="false" text="Project UCM Projection" />
       <Button fx:id="openGraphBtn" layoutX="843.0" layoutY="412.0" mnemonicParsing="false" onAction="#openGraphPopup" text="Open Oscillation Motion Graph" />
