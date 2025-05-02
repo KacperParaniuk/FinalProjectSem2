@@ -24,7 +24,24 @@ public class GraphWindowControllerPendulum {
         angleChart.getData().add(angleSeries);
 
 
-        }
+    }
+
+
+    public XYChart.Series<Number, Number> getKineticSeries(){
+        return kineticSeries;
+    }
+
+    public XYChart.Series<Number, Number> getPotentialSeries(){
+        return potentialSeries;
+    }
+
+    public XYChart.Series<Number, Number> getTotalSeries(){
+        return totalSeries;
+    }
+    public XYChart.Series<Number, Number> getAngleSeries(){
+        return angleSeries;
+    }
+
 }
 
 
