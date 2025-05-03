@@ -29,6 +29,7 @@ public class PendulumSimController extends Drawing {
     public ToggleButton idealPendBtn, realisticBtn;
     public CheckBox gravityCheckBox, gComponentCheckBox, restoringCheckBox, pathCheckBox, showAllCheckBox;
     public ToggleButton openGraphBtn;
+    public Text lbl1, lbl2, lbl3;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
@@ -133,6 +134,26 @@ public class PendulumSimController extends Drawing {
                         updateGraphs();
                     }
                 }
+
+                // education mode
+
+                if(isEducationalMode){
+                    if(stepIndex==1){
+                        if(now-simulationStart>500_000_000.0){
+                            stop();
+                            drawGravityVectors(false,true);
+
+                        }
+                    }
+                    else if(stepIndex==4){
+                        if(now-simulationStart>600_000_000.0){
+                            stop();
+
+                        }
+                    }
+                }
+
+
             }
         };
         timer.start();
@@ -427,14 +448,102 @@ public class PendulumSimController extends Drawing {
         }
     }
 
+    private double simulationStart;
+
     public void updateLectureStep(){
 
         System.out.println(stepIndex + ": Lecture Step");
 
         switch(stepIndex){
             case 1:
+
+                tooltipLabel.setLayoutY(300);
+                tooltipLabel.setLayoutX(50);
+                tooltipImage.setImage(null);
+                nextStepBtn.setLayoutX(50);
+                nextStepBtn.setLayoutY(450);
+                tooltipLabel.setText("First we need to understand the forces acting on the mass attached to the pendulum!! \n"
+                        + "We first have gravity pointing down, this vector of gravity doesn't really help so click next.! \n"
+                         +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                angle = Math.toRadians(90);
+                simulationStart = System.nanoTime();
+                handleStart();
                 break;
             case 2:
+                drawGravityVectors(true,true);
+                tooltipLabel.setText("That's better now we see the components of gravity split up into the x and y directions! \n"
+                        + "The y-component of gravity will pull the pendulum down beating the y component of tension, and the x-component of gravity will pull the pendulum toward equilibrium \n"
+                        + "Click next to see the next force! \n"
+                        +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                break;
+            case 3:
+                drawRestoringForce(false, true);
+                tooltipLabel.setText("The restoring force! This force is the vector sum of gravity's x and y components \n"
+                        + "This force provides a torque on the axis of rotation causing rotation but most importantly it always points toward the pendulum equilibrium which is the place of least energy because nature is lazy. \n"
+                        + "Click next to see the restoring force on the other side! \n"
+                        +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                break;
+            case 4:
+                simulationStart = System.nanoTime();
+                timer.start();
+                showAllCheckBox.setSelected(true);
+
+                tooltipLabel.setText("The restoring force will always point toward equilibrium trying to get to the pendulum to the least energy state  \n"
+                        + "As a result of having a linear restoring force and inertia the pendulum will forever swing in an ideal situation \n"
+                        + "Click next to see the restoring force in action \n"
+                        +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                break;
+            case 5:
+                timer.start();
+                tooltipLabel.setText("Once your done watching the beautiful simple harmonic motion click next! \n"+
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                break;
+            case 6:
+                timer.stop();
 
         }
 
@@ -466,6 +575,9 @@ public class PendulumSimController extends Drawing {
             idealPendBtn.setVisible(false);
             realisticBtn.setVisible(false);
             openGraphBtn.setVisible(false);
+            lbl1.setVisible(false);
+            lbl2.setVisible(false);
+            lbl3.setVisible(false);
 
             tooltipLabel.setVisible(true);
             tooltipLabel.setText("Step 1: Welcome to the Pendulum Simulation! \n"

@@ -11,14 +11,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="625.0" prefWidth="1012.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.PendulumSimController">
+<AnchorPane prefHeight="625.0" prefWidth="1012.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.PendulumSimController">
    <children>
       <Button layoutX="468.0" layoutY="537.0" mnemonicParsing="false" onAction="#actionMainMenu" text="Main Menu" />
       <Canvas fx:id="canvas" height="403.0" layoutX="120.0" layoutY="33.0" width="774.0" />
       <Slider fx:id="lengthSlider" layoutX="120.0" layoutY="465.0" onMouseReleased="#actionLengthOfString" />
-      <Text layoutX="26.0" layoutY="477.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Length of String:" />
+      <Text fx:id="lbl1" layoutX="26.0" layoutY="477.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Length of String:" />
       <Slider fx:id="angleSlider" layoutX="120.0" layoutY="489.0" onMouseReleased="#handleChangeAngle" />
-      <Text layoutX="80.0" layoutY="501.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" />
+      <Text fx:id="lbl2" layoutX="80.0" layoutY="501.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Angle:" />
       <Button fx:id="startBtn" layoutX="487.0" layoutY="436.0" mnemonicParsing="false" onAction="#handleStart" text="Start" />
       <Button fx:id="stopBtn" layoutX="487.0" layoutY="467.0" mnemonicParsing="false" onAction="#handleStop" text="Stop" />
       <Button fx:id="resetBtn" layoutX="486.0" layoutY="497.0" mnemonicParsing="false" onAction="#handleReset" text="Reset" />
@@ -51,7 +51,7 @@
             <Font size="17.0" />
          </font>
       </Text>
-      <Text layoutX="83.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mass:" />
+      <Text fx:id="lbl3" layoutX="83.0" layoutY="527.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Mass:" />
       <ToggleButton fx:id="openGraphBtn" layoutX="644.0" layoutY="469.0" mnemonicParsing="false" onAction="#openGraphPopup" text="Open Graphs" />
       <Label fx:id="tooltipLabel" layoutX="315.0" layoutY="78.0" prefWidth="400.0" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" text="Label" visible="false" wrapText="true" />
       <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="399.0" layoutY="213.0" pickOnBounds="true" preserveRatio="true" />
