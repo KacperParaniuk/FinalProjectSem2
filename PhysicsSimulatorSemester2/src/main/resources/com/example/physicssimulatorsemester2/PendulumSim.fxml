@@ -56,5 +56,9 @@
       <Label fx:id="tooltipLabel" layoutX="315.0" layoutY="78.0" prefWidth="400.0" style="-fx-font-size: 16; -fx-background-color: #ffffcc; -fx-padding: 10;" text="Label" visible="false" wrapText="true" />
       <ImageView fx:id="tooltipImage" fitHeight="180.0" fitWidth="259.0" layoutX="399.0" layoutY="213.0" pickOnBounds="true" preserveRatio="true" />
       <Button fx:id="nextStepBtn" layoutX="315.0" layoutY="250.0" mnemonicParsing="false" onAction="#handleNextStep" text="Next" />
+      <Button fx:id="answerChoice1" layoutX="233.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
+      <Button fx:id="answerChoice2" layoutX="296.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
+      <Button fx:id="answerChoice3" layoutX="358.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
+      <Button fx:id="answerChoice4" layoutX="421.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
    </children>
 </AnchorPane>

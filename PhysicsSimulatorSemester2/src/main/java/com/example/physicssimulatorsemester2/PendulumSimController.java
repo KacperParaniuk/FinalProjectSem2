@@ -30,6 +30,7 @@ public class PendulumSimController extends Drawing {
     public CheckBox gravityCheckBox, gComponentCheckBox, restoringCheckBox, pathCheckBox, showAllCheckBox;
     public ToggleButton openGraphBtn;
     public Text lbl1, lbl2, lbl3;
+    public Button answerChoice1, answerChoice2, answerChoice3, answerChoice4;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
@@ -148,7 +149,6 @@ public class PendulumSimController extends Drawing {
                     else if(stepIndex==4){
                         if(now-simulationStart>600_000_000.0){
                             stop();
-
                         }
                     }
                 }
@@ -545,6 +545,94 @@ public class PendulumSimController extends Drawing {
             case 6:
                 timer.stop();
 
+                nextStepBtn.setVisible(false);
+
+                tooltipLabel.setLayoutX(25);
+                tooltipLabel.setLayoutY(300);
+
+                tooltipImage.setLayoutX(400);
+                tooltipImage.setLayoutY(600);
+
+                answerChoice1.setVisible(true);
+                answerChoice1.setLayoutX(25);
+                answerChoice2.setVisible(true);
+                answerChoice2.setLayoutX(300);
+                answerChoice3.setVisible(true);
+                answerChoice3.setLayoutX(650);
+                answerChoice4.setVisible(true);
+                answerChoice4.setLayoutX(850);
+
+                answerChoice1.setText("The period is affected by a change in mass");
+                answerChoice2.setText("The period only is affected by the variables shown (l and g) ");
+                answerChoice3.setText("This is not the period equation");
+                answerChoice4.setText("The period is affected by anything");
+
+                correctAnswerChoice = 2;
+
+
+
+                tooltipLabel.setText("Lets look at what affects the period of the pendulum! \n"+
+                        "Look at the formula... the period is equal to 2 pi * square root of l over g \n" +
+                        "What does do you think this means? Click an answer choice!\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/periodOfPendReg.png")));
+
+                break;
+            case 7:
+                nextStepBtn.setVisible(true);
+                nextStepBtn.setLayoutY(500);
+
+                String chosen = getAnswerChoice(educationalAnswerChoice);
+                String correct = getAnswerChoice(correctAnswerChoice);
+
+                if(educationalAnswerChoice==correctAnswerChoice){
+                    tooltipLabel.setText("Correct!! You are a pendulum wizard! \n"+
+                            "The correct answer is indeed " + correct +
+                            "The only variables that will affect the period in time in an ideal pendulum!\n" +
+                            "“The period of a simple pendulum depends only on the length of the string and the acceleration due to gravity, " +
+                            "because the restoring force is proportional to mass, but so is inertia — so mass cancels out.”\n" +
+                            "As you can see in the picture. \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
+
+
+                }
+                else{
+                    tooltipLabel.setText("Wrong! You chose " + chosen + ": It's ok you are learning! \n"+
+                            "The correct answer is " + correct +
+                            "The only variables that will affect the period in time in an ideal pendulum!\n" +
+                            "“The period of a simple pendulum depends only on the length of the string and the acceleration due to gravity, " +
+                            "because the restoring force is proportional to mass, but so is inertia — so mass cancels out.”\n" +
+                            "As you can see in the picture. \n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
+
+                }
+
+                answerChoice1.setVisible(false);
+                answerChoice2.setVisible(false);
+                answerChoice3.setVisible(false);
+                answerChoice4.setVisible(false);
+
+
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/periodOfPendSpec.png")));
+
+
+
         }
 
 
@@ -578,6 +666,10 @@ public class PendulumSimController extends Drawing {
             lbl1.setVisible(false);
             lbl2.setVisible(false);
             lbl3.setVisible(false);
+            answerChoice1.setVisible(false);
+            answerChoice2.setVisible(false);
+            answerChoice3.setVisible(false);
+            answerChoice4.setVisible(false);
 
             tooltipLabel.setVisible(true);
             tooltipLabel.setText("Step 1: Welcome to the Pendulum Simulation! \n"
@@ -597,19 +689,60 @@ public class PendulumSimController extends Drawing {
             tooltipLabel.setVisible(false);
             nextStepBtn.setVisible(false);
             tooltipImage.setVisible(false);
+            answerChoice1.setVisible(false);
+            answerChoice2.setVisible(false);
+            answerChoice3.setVisible(false);
+            answerChoice4.setVisible(false);
 
         }
     }
 
 
+    private int educationalAnswerChoice;
+    private int correctAnswerChoice;
+
+    public void clickedAnswerChoice(ActionEvent actionEvent) {
+        Object source = actionEvent.getSource();
+
+        if(source instanceof Button) {
+            Button clickedButton = (Button) source;
+
+            String buttonID = clickedButton.getId();
+
+            if(buttonID.equals("answerChoice1")){
+                educationalAnswerChoice = 1;
+            }
+            else if (buttonID.equals("answerChoice2")) {
+                educationalAnswerChoice = 2;
+            }
+            else if (buttonID.equals("answerChoice3")) {
+                educationalAnswerChoice = 3;
+            }
+            else if (buttonID.equals("answerChoice4")) {
+                educationalAnswerChoice = 4;
+            }
+        }
+
+        stepIndex++;
+        updateLectureStep();
+    }
 
 
+    public String getAnswerChoice(int answerChoice){
+        if(answerChoice==1){
+            return answerChoice1.getText();
+        }
+        else if(answerChoice==2){
+            return answerChoice2.getText();
+        }
+        else if(answerChoice==3){
+            return answerChoice3.getText();
+        }
+        else if(answerChoice==4){
+            return answerChoice4.getText();
+        }
 
-
-
-
-
-
-
-
+        return null;
+    }
 }
+
