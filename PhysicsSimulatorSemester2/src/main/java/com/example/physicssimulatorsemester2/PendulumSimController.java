@@ -461,7 +461,7 @@ public class PendulumSimController extends Drawing {
                 tooltipLabel.setLayoutX(50);
                 tooltipImage.setImage(null);
                 nextStepBtn.setLayoutX(50);
-                nextStepBtn.setLayoutY(450);
+                nextStepBtn.setLayoutY(650);
                 tooltipLabel.setText("First we need to understand the forces acting on the mass attached to the pendulum!! \n"
                         + "We first have gravity pointing down, this vector of gravity doesn't really help so click next.! \n"
                          +
@@ -586,7 +586,7 @@ public class PendulumSimController extends Drawing {
                 break;
             case 7:
                 nextStepBtn.setVisible(true);
-                nextStepBtn.setLayoutY(500);
+                nextStepBtn.setLayoutY(700);
 
                 String chosen = getAnswerChoice(educationalAnswerChoice);
                 String correct = getAnswerChoice(correctAnswerChoice);
@@ -630,14 +630,57 @@ public class PendulumSimController extends Drawing {
 
 
                 tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/periodOfPendSpec.png")));
+                break;
+            case 8:
+                nextStepBtn.setVisible(false);
+                tooltipImage.setVisible(false);
+                tooltipLabel.setText("You've learned the basic now if you want to learn more click one of the options or return to main menu! \n"+
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
 
+                answerChoice1.setVisible(true);
+                answerChoice1.setText("1. Period & Frequency");
+                answerChoice2.setVisible(true);
+                answerChoice2.setText("2. Effect of Length");
+                answerChoice3.setVisible(true);
+                answerChoice3.setText("3. Energy in Motion");
+                answerChoice4.setVisible(true);
+                answerChoice4.setText("4. Angular Acceleration / Forces");
+                break;
+            case 9:
+                // don't change case unless user wants to go to main menu
+                answerChoice1.setVisible(false);
+                answerChoice2.setVisible(false);
+                answerChoice3.setVisible(false);
+                answerChoice4.setVisible(false);
 
-
+                lessonStep=0;
+                String explanation = pendulumLessons[educationalAnswerChoice][lessonStep];
+                tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn!"+
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+            case 10:
+                actionMainMenu();
+                break;
         }
-
-
-
-
 
     }
 
@@ -696,6 +739,41 @@ public class PendulumSimController extends Drawing {
 
         }
     }
+
+    private int topicIndex = 0;
+    private int lessonStep = 0;
+
+
+    private String[][] pendulumLessons = {
+            {
+                    "What is the period? It’s the time it takes to complete one full swing.", // make pendulum go in a full period
+                    "The period of a simple pendulum depends only on length and gravity.", // show differential equation (derivation)
+                    "Mass doesn't matter because force and inertia both scale with it.", // showcase big force vectors with big mass toggle the slider on for user changing mass
+                    "Use the formula: T = 2π√(L/g) When working with an ideal pendulum"
+                    // frequency... ask chat what I can teach about frequency
+            },
+            {
+                    "Changing the length affects how far the pendulum travels per swing.",
+                    "A longer pendulum has a longer period — it swings more slowly.",
+                    "Try adjusting the length slider and observing the change in period." // unlock slider for the user to expierment with
+            },
+            {
+                    "At the highest point, all energy is potential (PE).", // showcase graphs
+                    "At the lowest point, all energy is kinetic (KE).", // showcase graphs
+                    "The total mechanical energy remains constant (in ideal mode)." // showcase graphs
+            },
+            {
+                    "The restoring force pulls the pendulum toward equilibrium.",
+                    "It’s proportional to sin(θ), and θ must be small for the period formula to work.",
+                    "Angular acceleration = -g/L * sin(θ)"
+            }
+    };
+
+    private String[][] lessonPictures = {
+            {
+
+            }
+    };
 
 
     private int educationalAnswerChoice;
