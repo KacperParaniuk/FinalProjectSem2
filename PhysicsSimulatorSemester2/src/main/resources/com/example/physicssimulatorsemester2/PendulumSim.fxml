@@ -5,13 +5,14 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="625.0" prefWidth="1012.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.PendulumSimController">
+<AnchorPane prefHeight="625.0" prefWidth="1012.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.physicssimulatorsemester2.PendulumSimController">
    <children>
       <Button layoutX="468.0" layoutY="537.0" mnemonicParsing="false" onAction="#actionMainMenu" text="Main Menu" />
       <Canvas fx:id="canvas" height="403.0" layoutX="120.0" layoutY="33.0" width="774.0" />
@@ -60,5 +61,6 @@
       <Button fx:id="answerChoice2" layoutX="296.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
       <Button fx:id="answerChoice3" layoutX="358.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
       <Button fx:id="answerChoice4" layoutX="421.0" layoutY="450.0" mnemonicParsing="false" onAction="#clickedAnswerChoice" text="Button" />
+      <TextField fx:id="answerTextBox" layoutX="433.0" layoutY="368.0" promptText="Type Answer Here" />
    </children>
 </AnchorPane>

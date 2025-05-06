@@ -31,6 +31,7 @@ public class PendulumSimController extends Drawing {
     public ToggleButton openGraphBtn;
     public Text lbl1, lbl2, lbl3;
     public Button answerChoice1, answerChoice2, answerChoice3, answerChoice4;
+    public TextField answerTextBox;
     private boolean isEducationalMode = false;
 
     private int metersToPixels = 60;
@@ -88,6 +89,23 @@ public class PendulumSimController extends Drawing {
 
         drawRope(pivotX, pivotY, pivotX, pivotY+(length)); // 2 meters long
         drawBall(pivotX, 80 + length);
+    }
+
+    public void highestPointPendulum(){
+        length = 2 * metersToPixels;
+        bobX = pivotX;
+        angle = Math.toRadians(60);
+        bobY = 100 + length;
+        angularVelocity = 0;
+        angularAcceleration=0;
+
+        bobX = pivotX + length * Math.sin(angle);
+        bobY = pivotY + length * Math.cos(angle);
+
+
+
+        drawRope(pivotX, pivotY, bobX, bobY); // 2 meters long
+        drawBall(bobX, bobY);
     }
 
     public void clearCanvas(){
@@ -438,14 +456,22 @@ public class PendulumSimController extends Drawing {
     public Label tooltipLabel;
     public ImageView tooltipImage;
     public Button nextStepBtn;
+    private int userAnswer;
 
     private int stepIndex = 0;
 
     public void handleNextStep(){
-        if(stepIndex<10){
+        if(stepIndex<9){
             stepIndex++;
-            updateLectureStep();
         }
+        else{
+            if(answerTextBox.isVisible()){
+                userAnswer = Integer.parseInt(answerTextBox.getText());
+            }
+            System.out.println(lessonStep + "LESSON");
+            lessonStep++;
+        }
+        updateLectureStep();
     }
 
     private double simulationStart;
@@ -655,18 +681,23 @@ public class PendulumSimController extends Drawing {
                 answerChoice3.setText("3. Energy in Motion");
                 answerChoice4.setVisible(true);
                 answerChoice4.setText("4. Angular Acceleration / Forces");
+                lessonStep=0;
                 break;
             case 9:
                 // don't change case unless user wants to go to main menu
+                tooltipImage.setVisible(true);
+                tooltipImage.setImage(null);
+                tooltipImage.setLayoutX(100);
+                tooltipImage.setLayoutY(500);
+
                 answerChoice1.setVisible(false);
                 answerChoice2.setVisible(false);
                 answerChoice3.setVisible(false);
                 answerChoice4.setVisible(false);
-
-                lessonStep=0;
-                String explanation = pendulumLessons[educationalAnswerChoice][lessonStep];
-                tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn!"+
-                        "\n" +
+                nextStepBtn.setVisible(true);
+                String explanation = pendulumLessons[educationalAnswerChoice-1][lessonStep];
+                tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn! "+
+                        explanation + "\n" +
                         "\n" +
                         "\n" +
                         "\n" +
@@ -677,6 +708,66 @@ public class PendulumSimController extends Drawing {
                         "\n" +
                         "\n"
                 );
+
+                if(lessonPictures[educationalAnswerChoice-1].length < lessonStep && !lessonPictures[educationalAnswerChoice-1][lessonStep].isEmpty()){
+
+                    tooltipImage.setImage(new Image(getClass().getResourceAsStream(lessonPictures[educationalAnswerChoice-1][lessonStep])));
+                }
+
+
+                if(educationalAnswerChoice-1==2 && lessonStep==0){
+                    clearCanvas();
+                    highestPointPendulum();
+                    gc.setFill(Color.RED);
+                    gc.setFont(new Font("Arial", 16));
+                    gc.fillText("To calculate potential energy \n" +
+                            "we use the formula Ug = mgh ", bobX+10, bobY);
+                }
+                else if(educationalAnswerChoice-1==2 && lessonStep==1){
+                    clearCanvas();
+                    resetPendulum();
+                    gc.setFill(Color.RED);
+                    gc.setFont(new Font("Arial", 16));
+                    gc.fillText("To calculate kinetic energy \n" +
+                            "we use the formula KE = 1/2mv^2 \n", bobX+10, bobY);
+                }
+                else if(educationalAnswerChoice-1==2 && lessonStep==2){
+                    clearCanvas();
+                    resetPendulum();
+                    gc.setFill(Color.RED);
+                    gc.setFont(new Font("Arial", 16));
+                    gc.fillText("Because ME is conserved \n" +
+                            "we use conservation of energy \n" +
+                            "Such as mgh = 1/2mv^2 to calculate \n" +
+                            "certain values", bobX+10, bobY);
+                }
+                else if(educationalAnswerChoice-1==2 && lessonStep==3){
+                    clearCanvas();
+                    resetPendulum();
+                    gc.setFill(Color.RED);
+                    gc.setFont(new Font("Arial", 16));
+                    gc.fillText("Because ME is conserved \n" +
+                            "we use conservation of energy \n" +
+                            "Such as mgh = 1/2mv^2 to calculate \n" +
+                            "certain values", bobX+10, bobY);
+                }
+                else if(educationalAnswerChoice-1==2 && lessonStep==4){
+                    clearCanvas();
+                    resetPendulum();
+                    answerTextBox.setVisible(true);
+                }
+                else if(educationalAnswerChoice-1==2 && lessonStep==5){
+                    clearCanvas();
+                    resetPendulum();
+                    answerTextBox.setVisible(false);
+                    if(userAnswer==10){
+                        System.out.println("correct!");
+                    }
+
+                }
+
+
+                break;
             case 10:
                 actionMainMenu();
                 break;
@@ -713,6 +804,7 @@ public class PendulumSimController extends Drawing {
             answerChoice2.setVisible(false);
             answerChoice3.setVisible(false);
             answerChoice4.setVisible(false);
+            answerTextBox.setVisible(false);
 
             tooltipLabel.setVisible(true);
             tooltipLabel.setText("Step 1: Welcome to the Pendulum Simulation! \n"
@@ -736,12 +828,13 @@ public class PendulumSimController extends Drawing {
             answerChoice2.setVisible(false);
             answerChoice3.setVisible(false);
             answerChoice4.setVisible(false);
-
+            answerTextBox.setVisible(false);
         }
     }
 
     private int topicIndex = 0;
     private int lessonStep = 0;
+
 
 
     private String[][] pendulumLessons = {
@@ -758,9 +851,12 @@ public class PendulumSimController extends Drawing {
                     "Try adjusting the length slider and observing the change in period." // unlock slider for the user to expierment with
             },
             {
-                    "At the highest point, all energy is potential (PE).", // showcase graphs
-                    "At the lowest point, all energy is kinetic (KE).", // showcase graphs
-                    "The total mechanical energy remains constant (in ideal mode)." // showcase graphs
+                    "At the highest point, all energy is potential (PE).",
+                    "At the lowest point, all energy is kinetic (KE).",
+                    "The total mechanical energy remains constant (in ideal mode).",
+                    "Now that you know the basics lets try a question! Assuming g = 10 m/s^2 A person releases an ideal pendulum from a height of 5 meters how fast will it be travelling at the bottom? Type" +
+                            "your answer WITHOUT units and click next! ",
+                    "The answer is.... 10 m/s !!! This mini lesson is over!"
             },
             {
                     "The restoring force pulls the pendulum toward equilibrium.",
@@ -772,6 +868,12 @@ public class PendulumSimController extends Drawing {
     private String[][] lessonPictures = {
             {
 
+            },
+            {
+
+            },
+            {
+                "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png"
             }
     };
 
