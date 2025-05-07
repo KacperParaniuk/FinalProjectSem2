@@ -91,6 +91,15 @@ public class PendulumSimController extends Drawing {
         drawBall(pivotX, 80 + length);
     }
 
+    public void resetPendulumAttributes(){
+        length = 2 * metersToPixels;
+        bobX = pivotX;
+        angle = Math.toRadians(0);
+        bobY = 80 + length;
+        angularVelocity = 0;
+        angularAcceleration=0;
+    }
+
     public void highestPointPendulum(){
         length = 2 * metersToPixels;
         bobX = pivotX;
@@ -396,6 +405,12 @@ public class PendulumSimController extends Drawing {
 
     public void actionLengthOfString() {
         clearCanvas();
+        if(isEducationalMode && slidersEnabled){
+            resetPendulumAttributes();
+            angle = Math.toRadians(90);
+            timer.stop();
+            startBtn.setDisable(false);
+        }
         length = (lengthSlider.getValue() / 10);
         lengthLbl.setText("Length: " + roundToOneDecimalPlace(length) + " meters");
         length = length * metersToPixels;
@@ -469,12 +484,26 @@ public class PendulumSimController extends Drawing {
                 userAnswer = Integer.parseInt(answerTextBox.getText());
             }
             System.out.println(lessonStep + "LESSON");
-            lessonStep++;
+            if(lessonStep+1 > pendulumLessons[educationalAnswerChoice-1].length-1){
+                System.out.println("cleared");
+                timer.stop();
+                slidersEnabled = false;
+                startBtn.setVisible(false);
+                lengthLbl.setVisible(false);
+                lengthSlider.setVisible(false);
+                lessonStep=0;
+                stepIndex = 8;
+            }
+            else{
+                lessonStep++;
+            }
+
         }
         updateLectureStep();
     }
 
     private double simulationStart;
+    private boolean slidersEnabled = false;
 
     public void updateLectureStep(){
 
@@ -685,6 +714,18 @@ public class PendulumSimController extends Drawing {
                 break;
             case 9:
                 // don't change case unless user wants to go to main menu
+
+                if (educationalAnswerChoice-1==1 && lessonStep == 2) {
+                    clearCanvas();
+                    resetPendulum();
+                    startBtn.setVisible(true);
+                    lengthLbl.setVisible(true);
+                    lengthSlider.setVisible(true);
+                    startBtn.setDisable(false);
+                    angle = Math.toRadians(90);
+                    slidersEnabled =true;
+                }
+
                 tooltipImage.setVisible(true);
                 tooltipImage.setImage(null);
                 tooltipImage.setLayoutX(100);
@@ -696,22 +737,32 @@ public class PendulumSimController extends Drawing {
                 answerChoice4.setVisible(false);
                 nextStepBtn.setVisible(true);
                 String explanation = pendulumLessons[educationalAnswerChoice-1][lessonStep];
-                tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn! "+
-                        explanation + "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n"
-                );
+                if(slidersEnabled){
+                    tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn! "+
+                            explanation + "\n"
+                    );
+                }
+                else{
+                    tooltipLabel.setText("You've clicked on " + getAnswerChoice(educationalAnswerChoice) +" Let's learn! "+
+                            explanation + "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n" +
+                            "\n"
+                    );
+                }
 
-                if(lessonPictures[educationalAnswerChoice-1].length < lessonStep && !lessonPictures[educationalAnswerChoice-1][lessonStep].isEmpty()){
 
-                    tooltipImage.setImage(new Image(getClass().getResourceAsStream(lessonPictures[educationalAnswerChoice-1][lessonStep])));
+                if(lessonPictures[educationalAnswerChoice-1].length > lessonStep ){
+
+                    if(!lessonPictures[educationalAnswerChoice-1][lessonStep].isEmpty()){
+                        tooltipImage.setImage(new Image(getClass().getResourceAsStream(lessonPictures[educationalAnswerChoice-1][lessonStep])));
+                    }
                 }
 
 
@@ -750,19 +801,16 @@ public class PendulumSimController extends Drawing {
                             "we use conservation of energy \n" +
                             "Such as mgh = 1/2mv^2 to calculate \n" +
                             "certain values", bobX+10, bobY);
+                    answerTextBox.setVisible(true);
                 }
                 else if(educationalAnswerChoice-1==2 && lessonStep==4){
                     clearCanvas();
                     resetPendulum();
-                    answerTextBox.setVisible(true);
-                }
-                else if(educationalAnswerChoice-1==2 && lessonStep==5){
-                    clearCanvas();
-                    resetPendulum();
                     answerTextBox.setVisible(false);
                     if(userAnswer==10){
-                        System.out.println("correct!");
                     }
+
+
 
                 }
 
@@ -874,6 +922,9 @@ public class PendulumSimController extends Drawing {
             },
             {
                 "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png"
+            },
+            {
+
             }
     };
 
