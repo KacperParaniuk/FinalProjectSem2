@@ -808,11 +808,16 @@ public class PendulumSimController extends Drawing {
                     resetPendulum();
                     answerTextBox.setVisible(false);
                     if(userAnswer==10){
+
+
+
+
+
                     }
 
-
-
                 }
+
+
 
 
                 break;
@@ -908,14 +913,14 @@ public class PendulumSimController extends Drawing {
             },
             {
                     "The restoring force pulls the pendulum toward equilibrium.",
-                    "It’s proportional to sin(θ), and θ must be small for the period formula to work.",
+                    "It’s proportional to sin(θ), and θ must be small for the period formula to work. This is called a small angle approximation which is a differential equation!",
                     "Angular acceleration = -g/L * sin(θ)"
             }
     };
 
     private String[][] lessonPictures = {
             {
-
+                "/Pictures/periodOfPendReg.png", "/Pictures/periodDerivationPendulum.png"
             },
             {
 
@@ -924,7 +929,7 @@ public class PendulumSimController extends Drawing {
                 "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png"
             },
             {
-
+                "","/Pictures/smallAngleApproximation.png",
             }
     };
 
