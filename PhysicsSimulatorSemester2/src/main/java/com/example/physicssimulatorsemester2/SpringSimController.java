@@ -9,10 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.XYChart;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -21,7 +20,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.IOException;
+import java.net.URI;
 
 public class SpringSimController extends Drawing{
     public Canvas canvas;
@@ -35,6 +36,7 @@ public class SpringSimController extends Drawing{
     public Label lbl1, lbl2, lbl3;
     public CheckBox UCMCheckBox;
     public Button openGraphBtn;
+    public Hyperlink hyperLink;
 
     private boolean isEducationalMode = false;
 
@@ -68,6 +70,20 @@ public class SpringSimController extends Drawing{
         createBox();
         drawSpring();
         drawEquilibrium();
+
+
+        hyperLink.setOnAction(e -> {
+            try{
+                Desktop.getDesktop().browse(new URI("https://www.flippingphysics.com/simple-harmonic-motion-gifs.html"));
+            }
+            catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+
+        });
+
+
 
 
 
@@ -260,7 +276,7 @@ public class SpringSimController extends Drawing{
 
 
 
-    public void actionStartSim(ActionEvent actionEvent) {
+    public void actionStartSim() {
         updateGraphTimeInterval = System.nanoTime();
         startBtn.setDisable(true);
         stopBtn.setDisable(false);
@@ -466,7 +482,6 @@ public class SpringSimController extends Drawing{
         stopBtn.setDisable(false);
         resumeBtn.setVisible(false);
 
-
         xPixels = deltaXSlider.getValue()/30;
         xPixels = xPixels *metersToPixels;
         endX = equilibriumX+ xPixels;
@@ -624,6 +639,152 @@ public class SpringSimController extends Drawing{
 
                 break;
             case 2:
+                allVectorsCheckBox.setSelected(true);
+                xPixels = 200;
+                endX = equilibriumX+ xPixels;
+                massX= endX;
+                actionStartSim();
+                tooltipLabel.setText("The restoring force always points in the middle just like it did in the pendulum \n"
+                        + "That's why In an ideal situation (without friction) like this one the pendulum enters simple harmonic motion and does not stop \n"
+                        + "Enjoy the spring going in simple harmonic motion! Think about how this can relate to uniform circular motion?!" + " Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+
+                break;
+            case 3:
+                clearCanvas();
+                resetSpring();
+                timer.stop();
+
+                tooltipLabel.setText("Click on this link and learn about how simple harmonic motion is related to uniform circular motion!\n"
+                        + "Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+                hyperLink.setVisible(true);
+                hyperLink.setLayoutX(50);
+                hyperLink.setLayoutY(500);
+
+
+                break;
+            case 4:
+                hyperLink.setVisible(false);
+                tooltipLabel.setText("This  is why the x-position of the spring can be modeled as... !\n"
+                        + "Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+
+                tooltipImage.setLayoutY(550);
+                tooltipImage.setLayoutX(100);
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/uniformCircularMotion.png")));
+
+
+                break;
+            case 5:
+
+                tooltipLabel.setText("Let's derive the period for a spring now that we know the position function of a spring !\n"
+                        + "First let's look at Newtons Second Law equation for an ideal spring and isolate acceleration or the second derivative of position to figure out the angular frequency\n"+
+                        "Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/part1.png")));
+
+
+
+
+                break;
+
+            case 6:
+
+                tooltipLabel.setText("Let's derive the period for a spring!\n"
+                        + "Now lets substitute in the the function of x for x. \n"+
+                        "Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/part2.png")));
+
+
+                break;
+
+            case 7:
+                tooltipLabel.setText("Let's derive the period for a spring!\n"
+                        + "Now we can figure out that the angular frequency is...  \n"+
+                        "Click \"next step\" once your done! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/part3.png")));
+
+                break;
+
+
+            case 8:
+                tooltipLabel.setText("Let's derive the period for a spring!\n"
+                        + "And substitute angular frequency into the period equation T = 2pi / w \n"+
+                        "That's it! Now you can see how different variables effect the period or the time it takes for ONE revolution of the spring! \n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n"
+                );
+                tooltipImage.setImage(new Image(getClass().getResourceAsStream("/Pictures/part4.png")));
+                break;
+
+
+            case 9:
+                actionMainMenu();
+                break;
+
 
 
         }
@@ -660,6 +821,7 @@ public class SpringSimController extends Drawing{
             currentKValLbl.setVisible(false);
             openGraphBtn.setVisible(false);
             UCMCheckBox.setVisible(false);
+            hyperLink.setVisible(false);
 
 
 
@@ -682,6 +844,7 @@ public class SpringSimController extends Drawing{
             tooltipLabel.setVisible(false);
             nextStepBtn.setVisible(false);
             tooltipImage.setVisible(false);
+            hyperLink.setVisible(false);
 
         }
     }
