@@ -28,9 +28,12 @@ public class Drawing {
         gc.fillText(forceName, endX+offsetX, endY+offsetY);
 
 
+    }
 
-
-
+    public void writeText(GraphicsContext gc, double endX, double endY, Color color, String text){
+        gc.setFill(color);
+        gc.setFont(new Font("Arial", 12));
+        gc.fillText(text, endX, endY);
 
     }
 

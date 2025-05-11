@@ -178,6 +178,24 @@ public class PendulumSimController extends Drawing {
                             stop();
                         }
                     }
+
+                    if(periodCalculate){
+                        double period = 2 * Math.PI * Math.sqrt((length/48)/g);
+                        double currentTimeSinceExecution = (now-updateGraphTimeInterval) / 1_000_000_000.0;
+                        System.out.println(currentTimeSinceExecution +" Current Time");
+                        if(period > currentTimeSinceExecution){
+                            writeText(gc, 200,200,Color.BLACK, "Current Time: " + roundToOneDecimalPlace(currentTimeSinceExecution) + " Seconds");
+                        }
+                        else{
+                            clearCanvas();
+                            resetPendulum();
+                            writeText(gc, 200,200,Color.BLACK, "Period Was: " + roundToOneDecimalPlace(period) + " Seconds");
+                            startBtn.setDisable(false);
+                            stop();
+
+                        }
+
+                    }
                 }
 
 
@@ -504,6 +522,7 @@ public class PendulumSimController extends Drawing {
 
     private double simulationStart;
     private boolean slidersEnabled = false;
+    private boolean periodCalculate = false;
 
     public void updateLectureStep(){
 
@@ -715,7 +734,7 @@ public class PendulumSimController extends Drawing {
             case 9:
                 // don't change case unless user wants to go to main menu
 
-                if (educationalAnswerChoice-1==1 && lessonStep == 2) {
+                if (educationalAnswerChoice-1==1 && lessonStep == 2 || educationalAnswerChoice-1==0 && lessonStep ==3) {
                     clearCanvas();
                     resetPendulum();
                     startBtn.setVisible(true);
@@ -724,7 +743,11 @@ public class PendulumSimController extends Drawing {
                     startBtn.setDisable(false);
                     angle = Math.toRadians(90);
                     slidersEnabled =true;
+                    if(educationalAnswerChoice-1==0){
+                        periodCalculate = true;
+                    }
                 }
+
 
                 tooltipImage.setVisible(true);
                 tooltipImage.setImage(null);
@@ -808,9 +831,6 @@ public class PendulumSimController extends Drawing {
                     resetPendulum();
                     answerTextBox.setVisible(false);
                     if(userAnswer==10){
-
-
-
 
 
                     }
@@ -914,7 +934,11 @@ public class PendulumSimController extends Drawing {
             {
                     "The restoring force pulls the pendulum toward equilibrium.",
                     "It’s proportional to sin(θ), and θ must be small for the period formula to work. This is called a small angle approximation which is a differential equation!",
-                    "Angular acceleration = -g/L * sin(θ)"
+                    "Angular acceleration = -g/L * sin(θ)",
+                    "To derive this restoring force let's start with Newtons 2nd Law equation ",
+                    "Then we substitute in the second derivative of position for acceleration and do simple algebra to...",
+                    "Find the angular frequency! We know that the second derivative of position equals angular frequency squared times position ",
+                    "Once we find angular frequency we can derive the period equation for an ideal pendulum (the time it takes for the pendulum to return back to its starting position "
             }
     };
 
@@ -929,7 +953,7 @@ public class PendulumSimController extends Drawing {
                 "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png", "/Pictures/potentialEnergyPendulum.png"
             },
             {
-                "","/Pictures/smallAngleApproximation.png",
+                "","/Pictures/smallAngleApproximation.png","","/Pictures/part1Spring.png","/Pictures/part2Spring.png","/Pictures/part5Spring.png","/Pictures/part6Spring.png"
             }
     };
 
